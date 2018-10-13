@@ -12,8 +12,11 @@ import java.awt.event.ActionEvent;
 
 public class charGUI extends JFrame{
 	JPanel contentPane;
+	private JButton btnNewButton;
+	
 	public charGUI() {
 		menu();
+		buttonClick();
 	}
 	private void menu() {
 		setTitle("Battleship");
@@ -24,7 +27,7 @@ public class charGUI extends JFrame{
 		setContentPane(contentPane);
 		contentPane.setLayout(new GridLayout(0, 3, 0, 0));
 		
-		JButton btnNewButton = new JButton("Character 1");
+		btnNewButton = new JButton("Character 1");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
@@ -39,4 +42,14 @@ public class charGUI extends JFrame{
 		setVisible(true);
 		
 	}
+	private void buttonClick() {
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//JFrame charGUI = new JFrame();
+				new gridGUI();
+				setVisible(false);
+			}
+			});
+			
+		}
 }
