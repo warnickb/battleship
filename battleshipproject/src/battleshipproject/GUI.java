@@ -54,10 +54,8 @@ public class GUI extends JFrame {
 		btnNewGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//JFrame charGUI = new JFrame();
-				
 				new charGUI();
 				setVisible(false);
-				
 			}
 			});
 			
