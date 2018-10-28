@@ -13,7 +13,7 @@ public interface BattleshipInterface {
 	 * 	1) the location is out of bounds
 	 * 	2) the location has already received fire
 	 */
-	public boolean select(int row_pos, int col_pos);
+	public boolean shotFired(int row_pos, int col_pos);
 
 
 
@@ -44,10 +44,66 @@ public interface BattleshipInterface {
 	 *	FIXME TWO METHODS TO PLACE SHIPS NOW
 	 *
 	 */
-	public void placeShips();
+	public void placePlayerShips();
+
+	/**
+	 *
+	 *
+	 *
+	 */
+	public boolean validLetter(char letter);
+
+	/**
+	 *
+	 *
+	 */
+	public boolean validNumber(int number);
+
+	/**
+	 *
+	 *
+	 *
+	 */
+	public int convertLetterInput(char letter);
+
+	/**
+	 *
+	 *
+	 *
+	 */
+	public void placeShip(int a, int b, String dir, int shipLength);
+
+	/**
+	 *
+	 *
+	 */
+	public void placeAIShips();
 
 
 	// FIXME MUST ADD TO THE GRID DISPLAYERS IN HERE
+	/**
+	 *
+	 *
+	 */
+	public void displayPlayerShips();
+	
+	/**
+	 *
+	 *
+	 */
+	public void displayAIShips();
+	
+	/**
+	 *
+	 *
+	 */
+	public void displayPlayerGrid();
+	
+	/**
+	 *
+	 *
+	 */
+	public void displayAIGrid();
 
 
 	/**
