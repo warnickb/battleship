@@ -142,7 +142,9 @@ public class BattleshipGame implements BattleshipInterface {
 		} else {
 			System.out.println("Something bad happened.");
 		}
-
+		
+		System.out.println("should not reach here");
+		return false;
 	}
 
 	/**
@@ -160,7 +162,18 @@ public class BattleshipGame implements BattleshipInterface {
 	 *
 	 * @return 0 = player, 1 = AI, -1 = winner currently undetermined
 	 */
-	public int getWinner();
+	public void getWinner() {  // FIXME probably dont want this to be int but be void - originally an int
+		if(playerHits == 17) {
+			System.out.println("Player has won!!");
+			
+		} 
+		else if (AIhits == 17) {
+			System.out.println("The computer has won!!");
+
+		}
+
+		// FIXME GIVE OPTION TO START A NEW GAME OR EXIT
+	}
 
 
 	/**
@@ -192,10 +205,9 @@ public class BattleshipGame implements BattleshipInterface {
 				AIshipLocs[row][col] = 1;
 		
 		System.out.println("Time to place your ships!");
-		placeShips();
+		placePlayerShips();
 		System.out.println("The AI's ships will now be placed at random...");
 		placeAIShips();
-		System.out.println("The AI's ships have been place!");
 
 	}
 
@@ -208,16 +220,16 @@ public class BattleshipGame implements BattleshipInterface {
 	public void placePlayerShips() {
 
 		int playerShipsPlaced = 0;
-		int playerCurrentShip = 2;
+		int playerCurrentShip = 1;
 		boolean playerFirstThreeLong = true;
 		String lettersUpper = "ABCDEFGH";
 		String numbers = "01234567";
 
-		printf("The grid is 8x8. The letters range from A-H and numbers from 0-7.");
+		System.out.println("The grid is 8x8. The letters range from A-H and numbers from 0-7.");
 		
 		while(playerShipsPlaced < 5) {
 			
-			String gridLoc;
+			String gridLoc = "";
 			int canPlace = 0;
 			int placeLeft[] = new int[2];
 			placeLeft[0] = -1;
@@ -228,28 +240,32 @@ public class BattleshipGame implements BattleshipInterface {
 			int placeUpwards[] = new int [2];
 			placeUpwards[0] = -1;
 			placeUpwards[1] = -1;
-			int placeDownwards = new int [2];
+			int placeDownwards[] = new int [2];
 			placeDownwards[0] = -1;
 			placeDownwards[1] = -1;
 			boolean shipPlaced = false;
+			boolean validInput = false;
 
 			// while loop used to check for valid input
-			Scanner scanner = new scanner(System.in);
+			Scanner scanner = new Scanner(System.in);
 			while(validInput == false) {
 				System.out.println("Enter the starting point of your ship (Ex: E5): ");
 				gridLoc = scanner.next();
-				if(validLetter(gridLoc.charAt(0)) == true && validNumber(Integer.parseInt(gridLoc.charAt(1))))
-					validInput == true;
-				else
+				if(gridLoc.length() == 2 && validLetter(gridLoc.substring(0, 1)) == true && validNumber(Integer.parseInt(gridLoc.substring(1, 2))))
+					validInput = true;
+				else {
 					System.out.println("Invalid input. Please try again.\n");
+				}
 			}
 
-			gridLoc.charAt(0) = gridLoc.charAt(0).toUpperCase();
+			// FIXME may need to print this out to test it
+			String gridCol = gridLoc.substring(1, 2);
+			gridLoc = gridLoc.substring(0, 1).toUpperCase() + gridCol;
 		
-			// coverting char digits to ints
-			int y = convertLetterInput(gridLoc.charAt(0));
-			int x = Integer.parseInt(gridLoc.charAt(1));
-			if(playerShipLocs[y][x] == 1) {
+			// coverting char digits to ints FIXME NEED TO USE SUBSTRING
+			int y = convertLetterInput(gridLoc.substring(0, 1));
+			int x = Integer.parseInt(gridLoc.substring(1, 2));
+			if(shipLocs[y][x] == 1) {
 
 				// FIXME I BELIEVE THIS COULD BE OPTIMIZED INTO ONE FOR LOOP
 				// checking in the left direction (number)
@@ -259,7 +275,7 @@ public class BattleshipGame implements BattleshipInterface {
 						// out of bounds
 						break;
 					}
-					else if(playerShipLocs[y][i] == 2) {
+					else if(shipLocs[y][i] == 2) {
 						// ship in the way
 						break;
 					}
@@ -277,7 +293,7 @@ public class BattleshipGame implements BattleshipInterface {
 						// out of bounds
 						break;
 					}
-					else if(playerShipLocs[y][i] == 2) {
+					else if(shipLocs[y][i] == 2) {
 						// ship in the way
 						break;
 					}
@@ -294,7 +310,7 @@ public class BattleshipGame implements BattleshipInterface {
 						// out of bounds
 						break;
 					}
-					else if(playerShipLocs[i][x] == 2) {
+					else if(shipLocs[i][x] == 2) {
 						// ship in the way
 						break;
 					}
@@ -312,15 +328,17 @@ public class BattleshipGame implements BattleshipInterface {
 						// out of bounds
 						break;
 					}
-					else if(playerShipLocs[i][x] == 2) {
+					else if(shipLocs[i][x] == 2) {
 						// ship in the way
 						break;
 					}
-					else if(i == 0) {
+					else if(i == 7) {
 						placeDownwards[0] = i;
 						placeDownwards[1] = x;
 						canPlace++;
 					}
+
+					// FIXME changed a whole lot of playerShipLocs to shipLocs
 				}
 
 			} else {
@@ -329,7 +347,7 @@ public class BattleshipGame implements BattleshipInterface {
 			
 			// FIXME GIVE AN OPTION TO CANCEL PLACEMENT??
 			if(canPlace == 0) {
-				printf("You can not place a ship in any direction from this point.");
+				System.out.println("You can not place a ship in any direction from this point.");
 			}
 			else if(canPlace == 4) {
 
@@ -343,7 +361,9 @@ public class BattleshipGame implements BattleshipInterface {
 			}
 			else if(canPlace == 3) {
 				// FIXME MAY NOT BE ABLE TO KEEP REUSING VARIABLES
-				String one, two, three;
+				String one = "";
+				String two = "";
+				String three = "";
 				int found = 1;
 				if(placeLeft[0] != -1) {
 					one = "Left";
@@ -376,8 +396,9 @@ public class BattleshipGame implements BattleshipInterface {
 			}
 			else if(canPlace == 2) {
 
-				String one, two;
-				int found 1;
+				String one = "";
+				String two = "";
+				int found = 1;
 				if(placeLeft[0] != -1) {
 					one = "Left";
 					found++;
@@ -393,7 +414,7 @@ public class BattleshipGame implements BattleshipInterface {
 					if(found == 1)
 						one = "Upwards";
 					else if(found == 2)
-						two = "Upwards;
+						two = "Upwards";
 					found++;
 				}
 				if(placeDownwards[0] != -1) {
@@ -411,7 +432,7 @@ public class BattleshipGame implements BattleshipInterface {
 			}
 			else if(canPlace == 1) {
 
-				String one;
+				String one = "";
 				if(placeLeft[0] != -1) 
 					one = "Left";
 				else if(placeRight[0] != -1)
@@ -431,11 +452,14 @@ public class BattleshipGame implements BattleshipInterface {
 			}
 			
 			if(shipPlaced == true) {
-				if(playerShipsPlaced == 3 && playerFirstThreeLong == true) {
+				if(playerShipsPlaced == 1 && playerFirstThreeLong == true) {
 					playerFirstThreeLong = false;
-				}
-				else
 					playerShipsPlaced++;
+				}
+				else {
+					playerShipsPlaced++; 
+					playerCurrentShip++;
+				}
 			}
 
 		}
@@ -448,10 +472,10 @@ public class BattleshipGame implements BattleshipInterface {
 	 *
 	 *
 	 */
-	public boolean validLetter(char letter) {
+	public boolean validLetter(String letter) { // FIXME NEED TO FIND WHERE THIS IS CALLED
 		String validLetters = "ABCDEFGH";
 		for(int i = 0; i < validLetters.length(); i++)
-			if(letter.equals(validLetters.charAt(i)))
+			if(letter.equals(validLetters.substring(i, i+1)))
 				return true;
 		return false;
 	}
@@ -473,7 +497,7 @@ public class BattleshipGame implements BattleshipInterface {
 	 *
 	 *
 	 */
-	public int convertLetterInput(char letter) {
+	public int convertLetterInput(String letter) {
 		switch (letter) {
 			case "A": 
 				return 0;
@@ -491,7 +515,10 @@ public class BattleshipGame implements BattleshipInterface {
 				return 6;
 			case "H":
 				return 7;
-
+		}
+		
+		System.out.println("should not reach here");
+		return -1;
 	}
 
 	/**
@@ -527,13 +554,14 @@ public class BattleshipGame implements BattleshipInterface {
 	public void placeAIShips() {
 
 		int AIshipsPlaced = 0;
+		// FIXME AICURSHIP MAY NEED ADJUSTMENT LIKE IT DID IN PLAYER PLACING
 		int AIcurrentShip = 2;
 		boolean AIfirstThreeLong = true;
 
 		// USE JOPTIONPANES FOR SHIP PLACEMENT??? NAH SYSTEMS
 		// MOVE SHIPLOCS INITIALIZATION TO RESET
 		// CREATE SOME LOOP OR ARRAY TO CONVERT ABCDEFGH TO NUMBERS 0-7
-
+		
 		Random rand = new Random();
 
 		while(AIshipsPlaced < 5) {
@@ -542,65 +570,84 @@ public class BattleshipGame implements BattleshipInterface {
 			int r2 = rand.nextInt(8);
 			// d is for direction
 			int d = rand.nextInt(4);
+		
 			if(AIshipLocs[r1][r2] == 1) {
 				// FIXME IF OUT OF BOUNDS NEED TO RESET TO 1 *****
-				AIshipLocs[r1][r2] = 2;
-				if(d == 0) {
+				//
+				// FIXME THE RETHINKING BEGINS HERE, NEED TO DO 2 SETTING ELSEWHERE 
+				//AIshipLocs[r1][r2] = 2;
+				// LOOKS IN THE UPWARD DIRECTION, IN RETHINKING, MOVE THE R1-I-1 TO FIRST IF CONDITIONAL
+				// FIXME CURSHIP MIGHT NEED +1
+				// ********************************************************************************************
+				// FIXME COMPLETE REVAMPING SHOULD INCLUDE NO PLACING UNTIL ALL PLACES HAVE BEEN CHECKED
+				// ********************************************************************************************
+				if(d == 0 && r1-AIcurrentShip >= 0) {
+					AIshipLocs[r1][r2] = 2;
 					for(int i = 0; i < AIcurrentShip-1; i++) {
-						// MAY ALSO NEED CONDITIONAL FOR IN BOUNDS
+						// MAY ALSO NEED CONDITIONAL FOR IN BOUNDS - FIRST PART OF IF SHOULD BE DOING THIS 0S AND 7S MAY BE THE ISSUE!!!!!!
 						if((r1-i-1) >= 0 && AIshipLocs[r1-i-1][r2] == 1) {
 							AIshipLocs[r1-i-1][r2] = 2;
 						} else {
-							for(int j = AIcurrentShip; j >= 0; j--) {
+							// FIXME THESE RESETS ARE GOING OB TO SET VALUES - WILL NEED TO USE VARIABLE i, used to use aicurship
+							for(int j = i; j >= 0; j--) {
 								AIshipLocs[r1-j][r2] = 1;
 								shipPlaced = false;
 							}
+							break;
 						}
 					}
 				}
-				else if(d == 1) {
+				else if(d == 1 && r1+AIcurrentShip <= 7) {
+					AIshipLocs[r1][r2] = 2;
 					for(int i = 0; i < AIcurrentShip-1; i++) {
 						// MAY ALSO NEED CONDITIONAL FOR IN BOUNDS
-						if((r1+i+1) >= 0 && AIshipLocs[r1+i+1][r2] == 1) {
+						if((r1+i+1) <= 7 && AIshipLocs[r1+i+1][r2] == 1) {
 							AIshipLocs[r1+i+1][r2] = 2;
 						} else {
-							for(int j = AIcurrentShip; j >= 0; j--) {
+							// FIXME this style of resetting must be reworked
+							for(int j = i; j >= 0; j--) {
 								AIshipLocs[r1+j][r2] = 1;
 								shipPlaced = false;
 							}
+							break;
 						}
 					}
 
 				}
-				else if(d == 2) {
+				else if(d == 2 && r2-AIcurrentShip >= 0) {
+					AIshipLocs[r1][r2] = 2;
 					for(int i = 0; i < AIcurrentShip-1; i++) {
-						// MAY ALSO NEED CONDITIONAL FOR IN BOUNDS
+						// MAY ALSO NEED CONDITIONAL FOR IN BOUNDS - FIXME REMOVE THE REDUNDANT CONDITIONALS (first part)
 						if((r2-i-1) >= 0 && AIshipLocs[r1][r2-i-1] == 1) {
 							AIshipLocs[r1][r2-i-1] = 2;
 						} else {
-							for(int j = AIcurrentShip; j >= 0; j--) {
+							for(int j = i; j >= 0; j--) {
 								// MAY NEED TO BE CHECKING THESE FOR OB
 								AIshipLocs[r1][r2-j] = 1;
 								shipPlaced = false;
 							}
+							break;
 						}
 					}
 				}
-				else if(d == 3) {
+				else if(d == 3 && r2+AIcurrentShip <= 7) {
+					AIshipLocs[r1][r2] = 2;
 					for(int i = 0; i < AIcurrentShip-1; i++) {
 						// MAY ALSO NEED CONDITIONAL FOR IN BOUNDS
-						if((r1-i-1) >= 0 && AIshipLocs[r1-i-1][r2] == 1) {
-							AIshipLocs[r1-i-1][r2] = 2;
+						if((r2+i+1) <= 7 && AIshipLocs[r1][r2+i+1] == 1) {
+							AIshipLocs[r1][r2+i+1] = 2;
 						} else {
-							for(int j = AIcurrentShip; j >= 0; j--) {
-								AIshipLocs[r1-j][r2] = 1;
+							for(int j = i; j >= 0; j--) {
+								AIshipLocs[r1][r2+j] = 1;
 								shipPlaced = false;
 							}
+							break;
 						}
 					}
 				}
 				else {
-					System.out.println("We have an error.");
+					shipPlaced = false;
+					//System.out.println("We have an error.");
 				}	
 
 
@@ -613,14 +660,18 @@ public class BattleshipGame implements BattleshipInterface {
 			}	
 
 			if(shipPlaced == true) {
-				if(AIshipsPlaced == 3 && AIfirstThreeLong == true) {
+				if(AIshipsPlaced == 2 && AIfirstThreeLong == true) {
 					AIfirstThreeLong = false;
-				}
-				else
 					AIshipsPlaced++;
+				}
+				else {
+					AIshipsPlaced++;
+					AIcurrentShip++;
+				}
 			}
 		}
-
+		
+		System.out.println("The AI's ships have been place!");
 		displayAIShips();
 	}
 
@@ -631,7 +682,13 @@ public class BattleshipGame implements BattleshipInterface {
 	 */
 	public void displayPlayerShips() {
 		System.out.println("Displaying the Player's Ship Placement:");
-		System.out.println(Arrays.deepToString(shipLocs);
+		for(int row = 0; row < totalRows; row++) {
+			for (int col = 0; col < totalCols; col++) {
+				System.out.print(shipLocs[row][col]);
+				if(col == 7)
+					System.out.println("");
+			}
+		}
 	}
 
 	/**
@@ -641,7 +698,13 @@ public class BattleshipGame implements BattleshipInterface {
 	 */
 	public void displayAIShips() {
 		System.out.println("Displaying AI's Ship Placement:");
-		System.out.println(Arrays.deepToString(AIshipLocs);
+		for(int row = 0; row < totalRows; row++) {
+			for (int col = 0; col < totalCols; col++) {
+				System.out.print(AIshipLocs[row][col]);
+				if(col == 7)
+					System.out.println("");
+			}
+		}
 	}
 
 	/**
@@ -651,7 +714,13 @@ public class BattleshipGame implements BattleshipInterface {
 	 */
 	public void displayPlayerGrid() {
 		System.out.println("Displaying the Player's Grid:");
-		System.out.println(Arrays.deepToString(grid);
+		for(int row = 0; row < totalRows; row++) {
+			for (int col = 0; col < totalCols; col++) {
+				System.out.print(grid[row][col]);
+				if(col == 7)
+					System.out.println("");
+			}
+		}
 	}
 
 	/**
@@ -661,7 +730,13 @@ public class BattleshipGame implements BattleshipInterface {
 	 */
 	public void displayAIGrid() {
 		System.out.println("Displaying the AI's Grid:");
-		System.out.println(Arrays.deepToString(AIgrid);
+		for(int row = 0; row < totalRows; row++) {
+			for (int col = 0; col < totalCols; col++) {
+				System.out.print(AIgrid[row][col]);
+				if(col == 7)
+					System.out.println("");
+			}
+		}
 	}
 
 

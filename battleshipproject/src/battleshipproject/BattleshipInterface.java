@@ -31,7 +31,7 @@ public interface BattleshipInterface {
 	 *
 	 * @return 0 = player, 1 = AI, -1 = winner currently undetermined
 	 */
-	public int getWinner();
+	public void getWinner();
 
 
 	/**
@@ -51,7 +51,7 @@ public interface BattleshipInterface {
 	 *
 	 *
 	 */
-	public boolean validLetter(char letter);
+	public boolean validLetter(String letter);
 
 	/**
 	 *
@@ -64,7 +64,7 @@ public interface BattleshipInterface {
 	 *
 	 *
 	 */
-	public int convertLetterInput(char letter);
+	public int convertLetterInput(String letter);
 
 	/**
 	 *
