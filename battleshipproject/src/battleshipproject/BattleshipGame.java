@@ -570,8 +570,11 @@ public class BattleshipGame implements BattleshipInterface {
 			int r2 = rand.nextInt(8);
 			// d is for direction
 			int d = rand.nextInt(4);
+			boolean canPlace = true;
+			int open = 0;
 		
 			if(AIshipLocs[r1][r2] == 1) {
+				open++;
 				// FIXME IF OUT OF BOUNDS NEED TO RESET TO 1 *****
 				//
 				// FIXME THE RETHINKING BEGINS HERE, NEED TO DO 2 SETTING ELSEWHERE 
@@ -582,66 +585,72 @@ public class BattleshipGame implements BattleshipInterface {
 				// FIXME COMPLETE REVAMPING SHOULD INCLUDE NO PLACING UNTIL ALL PLACES HAVE BEEN CHECKED
 				// ********************************************************************************************
 				if(d == 0 && r1-AIcurrentShip >= 0) {
-					AIshipLocs[r1][r2] = 2;
 					for(int i = 0; i < AIcurrentShip-1; i++) {
 						// MAY ALSO NEED CONDITIONAL FOR IN BOUNDS - FIRST PART OF IF SHOULD BE DOING THIS 0S AND 7S MAY BE THE ISSUE!!!!!!
 						if((r1-i-1) >= 0 && AIshipLocs[r1-i-1][r2] == 1) {
-							AIshipLocs[r1-i-1][r2] = 2;
+							open++;
 						} else {
-							// FIXME THESE RESETS ARE GOING OB TO SET VALUES - WILL NEED TO USE VARIABLE i, used to use aicurship
-							for(int j = i; j >= 0; j--) {
-								AIshipLocs[r1-j][r2] = 1;
-								shipPlaced = false;
-							}
+							open = 0;
+							shipPlaced = false;
 							break;
 						}
 					}
+					if(open == AIcurrentShip) {
+						for(int i = 0; i < AIcurrentShip; i++) {
+							AIshipLocs[r1-i][r2] = 2;
+						}
+					}
+
 				}
 				else if(d == 1 && r1+AIcurrentShip <= 7) {
-					AIshipLocs[r1][r2] = 2;
 					for(int i = 0; i < AIcurrentShip-1; i++) {
 						// MAY ALSO NEED CONDITIONAL FOR IN BOUNDS
 						if((r1+i+1) <= 7 && AIshipLocs[r1+i+1][r2] == 1) {
-							AIshipLocs[r1+i+1][r2] = 2;
+							open++;
 						} else {
-							// FIXME this style of resetting must be reworked
-							for(int j = i; j >= 0; j--) {
-								AIshipLocs[r1+j][r2] = 1;
-								shipPlaced = false;
-							}
+							open = 0;
+							shipPlaced = false;
 							break;
+						}
+					}
+					if(open == AIcurrentShip) {
+						for(int i = 0; i < AIcurrentShip; i++) {
+							AIshipLocs[r1+i][r2] = 3;
 						}
 					}
 
 				}
 				else if(d == 2 && r2-AIcurrentShip >= 0) {
-					AIshipLocs[r1][r2] = 2;
 					for(int i = 0; i < AIcurrentShip-1; i++) {
 						// MAY ALSO NEED CONDITIONAL FOR IN BOUNDS - FIXME REMOVE THE REDUNDANT CONDITIONALS (first part)
 						if((r2-i-1) >= 0 && AIshipLocs[r1][r2-i-1] == 1) {
-							AIshipLocs[r1][r2-i-1] = 2;
+							open++;
 						} else {
-							for(int j = i; j >= 0; j--) {
-								// MAY NEED TO BE CHECKING THESE FOR OB
-								AIshipLocs[r1][r2-j] = 1;
-								shipPlaced = false;
-							}
+							open = 0;
+							shipPlaced = false;	
 							break;
+						}
+					}
+					if(open == AIcurrentShip) {
+						for(int i = 0; i < AIcurrentShip; i++) {
+							AIshipLocs[r1][r2-i] = 4;
 						}
 					}
 				}
 				else if(d == 3 && r2+AIcurrentShip <= 7) {
-					AIshipLocs[r1][r2] = 2;
 					for(int i = 0; i < AIcurrentShip-1; i++) {
 						// MAY ALSO NEED CONDITIONAL FOR IN BOUNDS
 						if((r2+i+1) <= 7 && AIshipLocs[r1][r2+i+1] == 1) {
-							AIshipLocs[r1][r2+i+1] = 2;
+							open++;
 						} else {
-							for(int j = i; j >= 0; j--) {
-								AIshipLocs[r1][r2+j] = 1;
-								shipPlaced = false;
-							}
+							open = 0;
+							shipPlaced = false;
 							break;
+						}
+					}
+					if(open == AIcurrentShip) {
+						for(int i = 0; i < AIcurrentShip; i++) {
+							AIshipLocs[r1][r2+i] = 5;
 						}
 					}
 				}
@@ -660,7 +669,7 @@ public class BattleshipGame implements BattleshipInterface {
 			}	
 
 			if(shipPlaced == true) {
-				if(AIshipsPlaced == 2 && AIfirstThreeLong == true) {
+				if(AIshipsPlaced == 1 && AIfirstThreeLong == true) {
 					AIfirstThreeLong = false;
 					AIshipsPlaced++;
 				}
