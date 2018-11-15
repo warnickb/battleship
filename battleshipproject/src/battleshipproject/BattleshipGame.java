@@ -1,3 +1,5 @@
+package battleshipproject;
+
 import javax.swing.*;
 import java.util.*;
 

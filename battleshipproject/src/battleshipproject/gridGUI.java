@@ -1,6 +1,7 @@
 package battleshipproject;
 
-import java.awt.Container;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 
 import javax.swing.JButton;
@@ -9,30 +10,39 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 public class gridGUI extends JFrame {
-	private JPanel gridArray;
-	private JFrame frame;
-	JButton[][] grid;
+	JButton[][] board;
+	BattleshipGame newGame;
+	JFrame newFrame;
+	JPanel newPanel;
+	GridLayout newLayout;
 	
 	public gridGUI() {
-		
-		
-		createGrid();
+		gridSetup();
 	}
 	
-	private void createGrid() {
-		setTitle("Battleship");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
-		gridArray = new JPanel();
-		gridArray.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(gridArray);
-		gridArray.setLayout(new GridLayout(8,8));
+	private void gridSetup() {
+		newGame = new BattleshipGame();
 		
-		for(int i = 0; i < 64; i++) {
-			JButton button = new JButton(Integer.toString(i+1));
-			gridArray.add(button);
+		newFrame = new JFrame();
+		newPanel = new JPanel();
+		newLayout = new GridLayout(8, 8);
+		newPanel.setLayout(newLayout);
+		
+		
+		board = new JButton[newGame.getRows()][newGame.getCols()];
+		Dimension dim = new Dimension(80,80);
+		for (int row = 0; row < newGame.getRows(); row++) {
+			for (int col = 0; col < newGame.getCols(); col++) {
+				board[row][col] = new JButton(" ");
+				board[row][col].setPreferredSize(dim);
+				//board[row][col].addActionListener(newHandler);
+				board[row][col].setBackground(Color.WHITE);
+				newPanel.add(board[row][col]);
+			}
 		}
-		setVisible(true);
+		newFrame.getContentPane();
+		newFrame.setVisible(true);
+		newFrame.setLocationRelativeTo(null);
 		
 	}
 	
