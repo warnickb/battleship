@@ -16,6 +16,15 @@ public interface BattleshipInterface {
 	public boolean shotFired(int row_pos, int col_pos);
 
 
+	/**
+	 *
+	 *
+	 *
+	 *
+	 */
+	public int sunkStatus(int shipHit, int player);
+
+
 
 	/**
 	 * Returns whether it is the player's turn or the AI's turn
@@ -38,6 +47,13 @@ public interface BattleshipInterface {
 	 * Reset the game
 	 */
 	public void reset();
+
+	/**
+	 *
+	 *
+	 *
+	 */
+	public void playGame();
 
 
 	/**
