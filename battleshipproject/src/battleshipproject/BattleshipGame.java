@@ -174,18 +174,19 @@ public class BattleshipGame implements BattleshipInterface {
 	 *
 	 *
 	 */
-	public int sunkStatus(int shipHit, int player) {
+	public String sunkStatus(int shipHit, int player) {
 		// FIMXE MAY NEED TO CREATE AN ARRAY OR ARRAY LIST FOR THESE 
-		int AIcarrier = 5;
-		int playerCarrier = 5;
-		int AIbattleship = 4;
-		int playerBattleship = 4;
-		int AIcruiser = 3;
-		int playerCruiser = 3;
-		int AIsubmarine = 3;
-		int playerSubmarine = 3;
-		int AIdestroyer = 2;
-		int playerDestroyer = 2;
+		//int AIcarrier = 5;
+		//int playerCarrier = 5;
+		//int AIbattleship = 4;
+		//int playerBattleship = 4;
+		//int AIcruiser = 3;
+		//int playerCruiser = 3;
+		//int AIsubmarine = 3;
+		//int playerSubmarine = 3;
+		//int AIdestroyer = 2;
+		//int playerDestroyer = 2;
+		
 		int index = -1;
 
 		if(shipHit == 2 || shipHit == 3)
@@ -198,7 +199,7 @@ public class BattleshipGame implements BattleshipInterface {
 			index += 5;
 
 
-		// first 5 belong to player, next 5 to ai
+		// first 5 belong to player, next 5 to AI
 		//ArrayList<String> allShipNames = new ArrayList<>(10);
 
 		String[] allShipNames = new String[]{"Destroyer", "Submarine", "Cruiser", "Battleship", "Carrier"};
@@ -216,14 +217,15 @@ public class BattleshipGame implements BattleshipInterface {
 		allShipsStatus.add(4); // index 8
 		allShipsStatus.add(5); // index 9
 		
-
+		int val = allShipsStatus.get(index);
+		allShipsStatus.set(index, val-1);
 
 		//loop looking for 0, if 0 return either ship number or name
 		//turn that ship int value to -1
 
 		// to return ship name it would be allShipName[index] or [index/2] for player 2
 
-		return -1;
+		return "";
 	}
 
 	/**

@@ -6,6 +6,10 @@ package battleshipproject;
 
 public interface BattleshipInterface {
 
+
+	public BattleshipGame();
+
+
 	/**
 	 * Determines if location of fire is valid
 	 *
@@ -24,7 +28,7 @@ public interface BattleshipInterface {
 	 *
 	 *
 	 */
-	public int sunkStatus(int shipHit, int player);
+	public String sunkStatus(int shipHit, int player);
 
 
 
