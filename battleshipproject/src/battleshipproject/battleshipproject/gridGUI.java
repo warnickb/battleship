@@ -17,15 +17,20 @@ import javax.swing.border.EmptyBorder;
 public class gridGUI extends JFrame {
 	JButton enemyBoardButton = new JButton();
 	JButton playerBoardButton = new JButton();
-	
+	//BattleshipGame game = new BattleshipGame();
+	Color water = new Color(150,250,250);
+	Color hit = new Color(250,175,175);
+	Color sunk = new Color(175, 75, 75);
 	public gridGUI() {
 		gridSetup();
 		//buttonClick();
 	}
 	
 	private void gridSetup() {
+		//create GUI and set Layout
 		Container pane = getContentPane();
 		pane.setLayout(new GridLayout(17,8));
+		//Create Enemy Grid
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 			enemyBoardButton = new JButton(" ");
@@ -43,7 +48,8 @@ public class gridGUI extends JFrame {
 			
 			}
 		}
-	
+		
+		//Add scoring area between grids
 	    JTextField score = new JTextField();
 	    JTextField turnNum = new JTextField();
 	    JTextField hits = new JTextField();
@@ -77,6 +83,7 @@ public class gridGUI extends JFrame {
 	    enemyMisses.setEditable(false);
 	    space.setEditable(false);
 	    
+	    //Create Player Grid
 	    for (int a = 0; a < 8; a++) {
 			for (int b = 0; b < 8; b++) {
 			playerBoardButton = new JButton(" ");
