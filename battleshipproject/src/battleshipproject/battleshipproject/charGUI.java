@@ -13,6 +13,8 @@ import java.awt.event.ActionEvent;
 public class charGUI extends JFrame{
 	JPanel contentPane;
 	private JButton btnNewButton;
+	private JButton btnNewButton2;
+	private JButton btnNewButton3;
 	
 	public charGUI() {
 		menu();
@@ -34,16 +36,38 @@ public class charGUI extends JFrame{
 		});
 		contentPane.add(btnNewButton);
 		
-		JButton btnNewButton_1 = new JButton("Character 2");
-		contentPane.add(btnNewButton_1);
+		btnNewButton2 = new JButton("Character 2");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		contentPane.add(btnNewButton2);
 		
-		JButton btnNewButton_2 = new JButton("Character 3");
-		contentPane.add(btnNewButton_2);
+		btnNewButton3 = new JButton("Character 3");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		contentPane.add(btnNewButton3);
 		setVisible(true);
 		
 	}
 	private void buttonClick() {
 		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//JFrame charGUI = new JFrame();
+				new gridGUI();
+				setVisible(false);
+			}
+			});
+		btnNewButton2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//JFrame charGUI = new JFrame();
+				new gridGUI();
+				setVisible(false);
+			}
+			});
+		btnNewButton3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//JFrame charGUI = new JFrame();
 				new gridGUI();
