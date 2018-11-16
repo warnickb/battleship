@@ -1,4 +1,4 @@
-package battleshipproject;
+//package battleshipproject;
 
 import javax.swing.*;
 import java.util.*;
@@ -33,11 +33,15 @@ public class BattleshipGame implements BattleshipInterface {
 	private int playerMisses;
 	private int AImisses;
 	//private boolean firstGame; any need???
-	private int smartshotup;
-	private int smartshotdown;
-	private int smartshotleft;
-	private int smartshotright;
-	private boolean smartshooting;
+	//private int smartshotup;
+	//private int smartshotdown;
+	//private int smartshotleft;
+	//private int smartshotright;
+	private boolean smartShooting;
+	private int smartHits;
+	private int initialHitRow;
+	private int initialHitCol;
+	private String[] smartShots = {"XX", "XX", "XX", "XX"};
 	
 
 	/**
@@ -55,7 +59,10 @@ public class BattleshipGame implements BattleshipInterface {
 		AIhits = 0;
 		playerMisses = 0;
 		AImisses = 0;
-		smartshooting = false;
+		smartShooting = false;
+		smartHits = 0;
+		initialHitRow = -2;
+		initialHitCol = -2;
 
 		reset();		
 
@@ -104,7 +111,12 @@ public class BattleshipGame implements BattleshipInterface {
 				else if(AIshipLocs[row_pos][col_pos] >= 2) {
 					playerHits++;
 					// FIXME NEED LOGIC TO CHECK FOR SUNK SHIP NOTIFY OF A HIT 
-					sunkStatus(AIshipLocs[row_pos][col_pos], currentPlayer);
+					String shipSunk = sunkStatus(AIshipLocs[row_pos][col_pos], currentPlayer);
+
+					// ship has been sunk
+					if(shipSunk.length() > 1)
+						System.out.println("The enemies " + shipSunk + " has been sunk!!");
+
 					// update currentPlayer
 					if(currentPlayer == 2)
 						currentPlayer = 1;
@@ -120,18 +132,15 @@ public class BattleshipGame implements BattleshipInterface {
 		else if(currentPlayer == 2) {
 			// checking to see if location has already been fired to
 			if(AIgrid[row_pos][col_pos] != -1) {
-				// IN SMART AI, WE WILL WANT TO ADD AN OPTION TO SAVE NEXT SHOT AFTER A HIT - medium and hard difficulties
-				// FIXME use instance variable to achieve this?? use difficulty param in constructor to enable this
-				// FIXME may need multiple variables
-				// TO SOME PLACE NEAR LAST HIT
-				// THIS MAY CHANGE WITH GUI INTEGRATION
-				// System.out.println("You have already fired to this location!");
 				return false;
 			}
 			if(row_pos > -1 && col_pos > -1 && row_pos < totalRows && col_pos < totalCols) {
 				// missed shot
 				if(shipLocs[row_pos][col_pos] == 0) {
 					AImisses++;
+
+					// FIXME UPDATE smartShots on misses
+
 					// update currentPlayer
 					if(currentPlayer == 2)
 						currentPlayer = 1;
@@ -142,13 +151,74 @@ public class BattleshipGame implements BattleshipInterface {
 				// hit shot
 				else if(shipLocs[row_pos][col_pos] >= 2) {
 					AIhits++;
+					
+					smartShooting = true;
 
-					// FIXME NEED LOGIC TO CHECK FOR SUNK SHIP
-					smartshooting = true;
-					if(playerShipSunk)
-						smartshooting = false;
+					if(smartShooting) {
+						smartHits++;
+						int help = 0;
+						if(smartHits == 1) {
+							initialHitRow = row_pos;
+							initialHitCol = col_pos;
+							smartShots[0] = String.valueOf(initialHitRow) + String.valueOf(initialHitCol-1);
+							smartShots[1] = String.valueOf(initialHitRow) + String.valueOf(initialHitCol+1);
+							smartShots[2] = String.valueOf(initialHitRow-1) + String.valueOf(initialHitCol);
+							smartShots[3] = String.valueOf(initialHitRow+1) + String.valueOf(initialHitCol);
+						}
+						if(smartHits >= 2) {
+							// hit within same row - boat is horizontally placed
+							if(initialHitRow == row_pos) {
+								if(initialHitCol > col_pos) {
+									help = Integer.parseInt(smartShots[0].substring(1, 2)) - 1;		
+									smartShots[0] = String.valueOf(initialHitRow) + String.valueOf(help);
+									smartShots[1] = String.valueOf(initialHitRow) + String.valueOf(initialHitCol);
+								}
+								else if(initialHitCol < col_pos) {
+									help = Integer.parseInt(smartShots[1].substring(1, 2)) + 1;		
+									smartShots[0] = String.valueOf(initialHitRow) + String.valueOf(initialHitCol);
+									smartShots[1] = String.valueOf(initialHitRow) + String.valueOf(help);
+								}
+								else 
+									System.out.println("Should not reach here.");
+								smartShots[2] = "XX";
+								smartShots[3] = "XX";
+							}
+							// hit within same column - boat is vertically placed
+							else if(initialHitCol == col_pos) {
+								if(initialHitRow > row_pos) {
+									help = Integer.parseInt(smartShots[2].substring(0, 1)) - 1;		
+									smartShots[2] = String.valueOf(help) + String.valueOf(initialHitCol);
+									smartShots[3] = String.valueOf(initialHitRow) + String.valueOf(initialHitCol);
+								}
+								else if(initialHitRow < row_pos) {
+									help = Integer.parseInt(smartShots[3].substring(0, 1)) + 1;		
+									smartShots[2] = String.valueOf(initialHitRow) + String.valueOf(initialHitCol);
+									smartShots[3] = String.valueOf(help) + String.valueOf(initialHitCol);
+								}
+								else 
+									System.out.println("Should not reach here.");
+								smartShots[0] = "XX";
+								smartShots[1] = "XX";
+							}
+							else
+								System.out.println("bummer");
+						}
+
+					}
+
+
+					String shipSunk = sunkStatus(AIshipLocs[row_pos][col_pos], currentPlayer);
+
+					// ship has been sunk
+					if(shipSunk.length() > 1) {
+						System.out.println("Your  " + shipSunk + " has been sunk!!");
+						smartShooting = false;
+					}
+
+					//if(playerShipSunk) //FIXME
+					//	smartShooting = false;
 					// FIXME UPDATE SMARTSHOTS
-
+					
 					// update currentPlayer
 					if(currentPlayer == 2)
 						currentPlayer = 1;
@@ -223,9 +293,22 @@ public class BattleshipGame implements BattleshipInterface {
 		//loop looking for 0, if 0 return either ship number or name
 		//turn that ship int value to -1
 
+		String sunkenShip = "";
+		for(int i = 0; i < allShipsStatus.size(); i++) {
+			if(allShipsStatus.get(i) == 0) {
+				if(player == 1)
+					sunkenShip = allShipNames[index];
+				else if(player == 2)
+					sunkenShip = allShipNames[index/2];
+				else
+					System.out.println("oh no");
+				allShipsStatus.set(i, -1);
+			}
+		}
+
 		// to return ship name it would be allShipName[index] or [index/2] for player 2
 
-		return "";
+		return sunkenShip;
 	}
 
 	/**
@@ -305,13 +388,14 @@ public class BattleshipGame implements BattleshipInterface {
 
 	}
 
-	// FIXME WILL BE MODIFIED FOR GUI IMPLEMENTATION
+	// FIXME WILL BE MODIFIED FOR GUI IMPLEMENTATION //// FOR DEMO PROGRAM THE AI FIRST SHOT TO BE A HIT?
 	public void playGame() {
 		Scanner scanner = new Scanner(System.in);
 		while(playerHits != 17 || AIhits != 17) {
 			String gridLoc = "";
 			boolean validInput = false;
 			int hmm = 0;
+
 			// player taking shot
 			while(validInput == false) {
 				System.out.println("Enter the coordinates to fire to: ");
@@ -330,10 +414,19 @@ public class BattleshipGame implements BattleshipInterface {
 			
 			// AI taking shot
 			Random rand = new Random();
-			int r1 = rand.nextInt(8);
-			int r2 = rand.nextInt(8);
-			while(shotFired(r1, r2) == false)
-				hmm++;
+			if(smartShooting) {
+				int r = rand.nextInt(4);
+				while(smartShots[r].equals("XX"))
+					r = rand.nextInt(4);
+				shotFired(Integer.parseInt(smartShots[r].substring(0,1)),
+						Integer.parseInt(smartShots[r].substring(1,2)));
+			}
+			else {
+				int r1 = rand.nextInt(8);
+				int r2 = rand.nextInt(8);
+				while(shotFired(r1, r2) == false)
+					hmm++;
+			}
 
 			// displaying all grids
 			displayPlayerShips();
