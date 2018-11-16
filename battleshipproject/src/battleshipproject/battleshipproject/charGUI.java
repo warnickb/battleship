@@ -37,14 +37,14 @@ public class charGUI extends JFrame{
 		contentPane.add(btnNewButton);
 		
 		btnNewButton2 = new JButton("Character 2");
-		btnNewButton.addActionListener(new ActionListener() {
+		btnNewButton2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
 		contentPane.add(btnNewButton2);
 		
 		btnNewButton3 = new JButton("Character 3");
-		btnNewButton.addActionListener(new ActionListener() {
+		btnNewButton3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});

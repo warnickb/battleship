@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -13,20 +15,33 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 public class gridGUI extends JFrame {
-	
+	JButton enemyBoardButton = new JButton();
+	JButton playerBoardButton = new JButton();
 	
 	public gridGUI() {
 		gridSetup();
-		
+		//buttonClick();
 	}
 	
 	private void gridSetup() {
 		Container pane = getContentPane();
 		pane.setLayout(new GridLayout(17,8));
-		for (int i = 0; i < 64; i++) {
-			JButton button = new JButton(" ");
-			button.setBackground(Color.white);
-			pane.add(button);
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+			enemyBoardButton = new JButton(" ");
+			enemyBoardButton.setActionCommand("(" + i + ", " + j + ")");
+			enemyBoardButton.setBackground(Color.white);
+			enemyBoardButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					enemyBoardButton = (JButton) e.getSource();
+					System.out.println(enemyBoardButton.getActionCommand()+" test");
+					
+				}
+			});
+			pane.add(enemyBoardButton);
+			
+			}
 		}
 	
 	    JTextField score = new JTextField();
@@ -62,15 +77,40 @@ public class gridGUI extends JFrame {
 	    enemyMisses.setEditable(false);
 	    space.setEditable(false);
 	    
-	    for (int i = 0; i < 64; i++) {
-			JButton button = new JButton(" ");
-			button.setBackground(Color.white);
-			pane.add(button);
+	    for (int a = 0; a < 8; a++) {
+			for (int b = 0; b < 8; b++) {
+			playerBoardButton = new JButton(" ");
+			playerBoardButton.setActionCommand("(" + a + ", " + b + ")");
+			playerBoardButton.setBackground(Color.white);
+			playerBoardButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					playerBoardButton = (JButton) e.getSource();
+					System.out.println(playerBoardButton.getActionCommand()+" test1");
+					
+				}
+			});
+			pane.add(playerBoardButton);
+			
+			}
 		}
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    pack();
 	    setVisible(true);
 	}
+	
+//	private void buttonClick() {
+//		enemyBoardButton.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				System.out.println("test");
+//			}
+//			});
+//		enemyBoardButton.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				System.out.println("test");
+//			}
+//			});
+//	}
 	
 	
 }
