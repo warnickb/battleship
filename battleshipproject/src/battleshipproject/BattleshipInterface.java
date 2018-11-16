@@ -1,13 +1,11 @@
-package battleshipproject;
-
-
+//package battleshipproject;
 
 
 
 public interface BattleshipInterface {
 
 
-	public BattleshipGame();
+	//public BattleshipGame();
 
 
 	/**
