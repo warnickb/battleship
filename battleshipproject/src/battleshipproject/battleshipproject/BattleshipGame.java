@@ -380,11 +380,11 @@ public class BattleshipGame implements BattleshipInterface {
 			for(int col = 0; col < totalCols; col++)
 				AIshipLocs[row][col] = 0;
 		
-		System.out.println("Time to place your ships!");
-		placePlayerShips();
-		System.out.println("The AI's ships will now be placed at random...");
-		placeAIShips();
-		playGame();
+		//System.out.println("Time to place your ships!");
+		//placePlayerShips();
+		//System.out.println("The AI's ships will now be placed at random...");
+		//placeAIShips();
+		//playGame();
 
 	}
 
@@ -398,12 +398,12 @@ public class BattleshipGame implements BattleshipInterface {
 
 			// player taking shot
 			while(validInput == false) {
-				System.out.println("Enter the coordinates to fire to: ");
+				//System.out.println("Enter the coordinates to fire to: ");
 				gridLoc = scanner.next();
 				if(gridLoc.length() == 2 && validLetter(gridLoc.substring(0, 1)) == true && validNumber(Integer.parseInt(gridLoc.substring(1, 2))))
 					validInput = true;
 				else {
-					System.out.println("Invalid input. Please try again.\n");
+					//System.out.println("Invalid input. Please try again.\n");
 				}
 			}
 			// received valid input
@@ -452,7 +452,7 @@ public class BattleshipGame implements BattleshipInterface {
 		String lettersUpper = "ABCDEFGH";
 		String numbers = "01234567";
 
-		System.out.println("The grid is 8x8. The letters range from A-H and numbers from 0-7.");
+		//System.out.println("The grid is 8x8. The letters range from A-H and numbers from 0-7.");
 		
 		while(playerShipsPlaced < 5) {
 			
@@ -476,12 +476,12 @@ public class BattleshipGame implements BattleshipInterface {
 			// while loop used to check for valid input
 			Scanner scanner = new Scanner(System.in);
 			while(validInput == false) {
-				System.out.println("Enter the starting point of your ship (Ex: E5): ");
+				//System.out.println("Enter the starting point of your ship (Ex: E5): ");
 				gridLoc = scanner.next();
 				if(gridLoc.length() == 2 && validLetter(gridLoc.substring(0, 1)) == true && validNumber(Integer.parseInt(gridLoc.substring(1, 2))))
 					validInput = true;
 				else {
-					System.out.println("Invalid input. Please try again.\n");
+					//System.out.println("Invalid input. Please try again.\n");
 				}
 			}
 
