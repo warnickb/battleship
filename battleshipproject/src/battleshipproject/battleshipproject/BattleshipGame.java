@@ -37,11 +37,16 @@ public class BattleshipGame implements BattleshipInterface {
 	//private int smartshotdown;
 	//private int smartshotleft;
 	//private int smartshotright;
+	private boolean placeCruiser;
 	private boolean smartShooting;
 	private int smartHits;
 	private int initialHitRow;
 	private int initialHitCol;
+	private int initialShipHit;
+	// ADD THESE TO RESET
 	private String[] smartShots = {"XX", "XX", "XX", "XX"};
+	private int[] allShipsStatus = new int[]{2, 3, 3, 4, 5, 2, 3, 3, 4, 5};
+	private String[] allShipNames = new String[]{"Destroyer", "Submarine", "Cruiser", "Battleship", "Carrier"};
 	
 
 	/**
@@ -63,6 +68,8 @@ public class BattleshipGame implements BattleshipInterface {
 		smartHits = 0;
 		initialHitRow = -2;
 		initialHitCol = -2;
+		initialShipHit = -2;
+		placeCruiser = false;
 
 		reset();		
 
@@ -91,31 +98,46 @@ public class BattleshipGame implements BattleshipInterface {
 		// GUI SHOULD ENSURE VALID INPUT
 		if(currentPlayer == 1) {
 			// checking to see if location has already been fired to
-			if(grid[row_pos][col_pos] != -1) {
+			if(grid[row_pos][col_pos] != 0) {
 				// THIS MAY CHANGE WITH GUI INTEGRATION
+				System.out.println("loc " + row_pos + " " + col_pos);
 				System.out.println("You have already fired to this location!");
 				return false;
 			}
-			if(row_pos > -1 && col_pos > -1 && row_pos < totalRows && col_pos < totalCols) {
+			else if(row_pos > -1 && col_pos > -1 && row_pos < totalRows && col_pos < totalCols) {
 				// missed shot FIXME NOTIFY OF A MISS
 				if(AIshipLocs[row_pos][col_pos] == 0) {
 					playerMisses++;
+					grid[row_pos][col_pos] = 1;
+					System.out.println("Player Miss: " + playerMisses);
+					System.out.println("loc " + row_pos + " " + col_pos);
+					System.out.println("CP : " + currentPlayer);
+
 					// update currentPlayer
 					if(currentPlayer == 2)
 						currentPlayer = 1;
 					else 
 						currentPlayer++;
-					return false;
+					return true;
 				} 
 				// hit shot
 				else if(AIshipLocs[row_pos][col_pos] >= 2) {
 					playerHits++;
-					// FIXME NEED LOGIC TO CHECK FOR SUNK SHIP NOTIFY OF A HIT 
+					System.out.println("Player Hit: " + playerHits);
+					System.out.println("loc " + row_pos + " " + col_pos);
+					System.out.println("CP : " + currentPlayer);
+					//if(playerHits == 17)
+					//	getWinner();
+
+					grid[row_pos][col_pos] = 2;
+			
 					String shipSunk = sunkStatus(AIshipLocs[row_pos][col_pos], currentPlayer);
 
 					// ship has been sunk
-					if(shipSunk.length() > 1)
+					if(shipSunk.length() > 1) {
 						System.out.println("The enemies " + shipSunk + " has been sunk!!");
+						//System.out.println("PlayerHits " + playerHits + "AIHits " + AIhits);
+					}
 
 					// update currentPlayer
 					if(currentPlayer == 2)
@@ -131,26 +153,33 @@ public class BattleshipGame implements BattleshipInterface {
 		}
 		else if(currentPlayer == 2) {
 			// checking to see if location has already been fired to
-			if(AIgrid[row_pos][col_pos] != -1) {
+			if(AIgrid[row_pos][col_pos] != 0) {
 				return false;
 			}
 			if(row_pos > -1 && col_pos > -1 && row_pos < totalRows && col_pos < totalCols) {
 				// missed shot
 				if(shipLocs[row_pos][col_pos] == 0) {
 					AImisses++;
-
-					// FIXME UPDATE smartShots on misses
+					AIgrid[row_pos][col_pos] = 1;
+					System.out.println("AI Miss : " + AImisses);
+					System.out.println("CP : " + currentPlayer);
+					// FIXME UPDATE smartShots on misses - should not be necessary
 
 					// update currentPlayer
 					if(currentPlayer == 2)
 						currentPlayer = 1;
 					else 
 						currentPlayer++;
-					return false;
+					return true;
 				} 
 				// hit shot
 				else if(shipLocs[row_pos][col_pos] >= 2) {
 					AIhits++;
+					System.out.println("AI Hit: " + AIhits);
+					System.out.println("CP : " + currentPlayer);
+					//if(AIhits == 17)
+					//	getWinner();
+					AIgrid[row_pos][col_pos] = 2;
 					
 					smartShooting = true;
 
@@ -160,23 +189,38 @@ public class BattleshipGame implements BattleshipInterface {
 						if(smartHits == 1) {
 							initialHitRow = row_pos;
 							initialHitCol = col_pos;
-							smartShots[0] = String.valueOf(initialHitRow) + String.valueOf(initialHitCol-1);
-							smartShots[1] = String.valueOf(initialHitRow) + String.valueOf(initialHitCol+1);
-							smartShots[2] = String.valueOf(initialHitRow-1) + String.valueOf(initialHitCol);
-							smartShots[3] = String.valueOf(initialHitRow+1) + String.valueOf(initialHitCol);
+							initialShipHit = shipLocs[row_pos][col_pos];
+							// FIXME PREVENT OB WITH XX HERE
+							if(col_pos > 0)
+								smartShots[0] = String.valueOf(initialHitRow) + String.valueOf(initialHitCol-1);
+							if(col_pos < 7)
+								smartShots[1] = String.valueOf(initialHitRow) + String.valueOf(initialHitCol+1);
+							if(row_pos > 0)
+								smartShots[2] = String.valueOf(initialHitRow-1) + String.valueOf(initialHitCol);
+							if(row_pos < 7)
+								smartShots[3] = String.valueOf(initialHitRow+1) + String.valueOf(initialHitCol);
 						}
 						if(smartHits >= 2) {
-							// hit within same row - boat is horizontally placed
-							if(initialHitRow == row_pos) {
+							// hit within same row - boat is horizontally placed   FIXME ADD AN AND TO ENSURE SAME SHIP ON SECOND HIT
+							if(initialHitRow == row_pos && shipLocs[row_pos][col_pos] == initialShipHit) {
 								if(initialHitCol > col_pos) {
-									help = Integer.parseInt(smartShots[0].substring(1, 2)) - 1;		
-									smartShots[0] = String.valueOf(initialHitRow) + String.valueOf(help);
-									smartShots[1] = String.valueOf(initialHitRow) + String.valueOf(initialHitCol);
+									help = Integer.parseInt(smartShots[0].substring(1, 2)) - 1;
+									// cannot have out of bounds coordinate	
+									if(help >= 0)	
+										smartShots[0] = String.valueOf(initialHitRow) + String.valueOf(help);
+									else
+										smartShots[0] = "XX"; // reached left boarder
+
+									// FIXME RELOOK OVER LINE BELOW - SHOULD NOT BE ALTERED
+									//smartShots[1] = String.valueOf(initialHitRow) + String.valueOf(initialHitCol);
 								}
 								else if(initialHitCol < col_pos) {
 									help = Integer.parseInt(smartShots[1].substring(1, 2)) + 1;		
-									smartShots[0] = String.valueOf(initialHitRow) + String.valueOf(initialHitCol);
-									smartShots[1] = String.valueOf(initialHitRow) + String.valueOf(help);
+									//smartShots[0] = String.valueOf(initialHitRow) + String.valueOf(initialHitCol);
+									if(help <= 7)
+										smartShots[1] = String.valueOf(initialHitRow) + String.valueOf(help);
+									else 
+										smartShots[1] = "XX"; // reached right boarder
 								}
 								else 
 									System.out.println("Should not reach here.");
@@ -184,16 +228,23 @@ public class BattleshipGame implements BattleshipInterface {
 								smartShots[3] = "XX";
 							}
 							// hit within same column - boat is vertically placed
-							else if(initialHitCol == col_pos) {
+							else if(initialHitCol == col_pos && shipLocs[row_pos][col_pos] == initialShipHit) {
 								if(initialHitRow > row_pos) {
-									help = Integer.parseInt(smartShots[2].substring(0, 1)) - 1;		
-									smartShots[2] = String.valueOf(help) + String.valueOf(initialHitCol);
-									smartShots[3] = String.valueOf(initialHitRow) + String.valueOf(initialHitCol);
+									help = Integer.parseInt(smartShots[2].substring(0, 1)) - 1;	
+									if(help >= 0)	
+										smartShots[2] = String.valueOf(help) + String.valueOf(initialHitCol);
+									else
+										smartShots[2] = "XX"; // reached top boarder
+
+									//smartShots[3] = String.valueOf(initialHitRow) + String.valueOf(initialHitCol);
 								}
 								else if(initialHitRow < row_pos) {
 									help = Integer.parseInt(smartShots[3].substring(0, 1)) + 1;		
-									smartShots[2] = String.valueOf(initialHitRow) + String.valueOf(initialHitCol);
-									smartShots[3] = String.valueOf(help) + String.valueOf(initialHitCol);
+									//smartShots[2] = String.valueOf(initialHitRow) + String.valueOf(initialHitCol);
+									if(help <= 7)
+										smartShots[3] = String.valueOf(help) + String.valueOf(initialHitCol);
+									else 
+										smartShots[3] = "XX"; // reached bottom boarder
 								}
 								else 
 									System.out.println("Should not reach here.");
@@ -201,18 +252,19 @@ public class BattleshipGame implements BattleshipInterface {
 								smartShots[1] = "XX";
 							}
 							else
-								System.out.println("bummer");
+								System.out.println("bummer");	//FIXME THIS MEANS ANOTHER BOAT WAS HIT
 						}
 
 					}
 
 
-					String shipSunk = sunkStatus(AIshipLocs[row_pos][col_pos], currentPlayer);
+					String shipSunk = sunkStatus(shipLocs[row_pos][col_pos], currentPlayer);
 
 					// ship has been sunk
 					if(shipSunk.length() > 1) {
-						System.out.println("Your  " + shipSunk + " has been sunk!!");
+						System.out.println("Your " + shipSunk + " has been sunk!!");
 						smartShooting = false;
+						smartHits = 0;
 					}
 
 					//if(playerShipSunk) //FIXME
@@ -245,20 +297,9 @@ public class BattleshipGame implements BattleshipInterface {
 	 *
 	 */
 	public String sunkStatus(int shipHit, int player) {
-		// FIMXE MAY NEED TO CREATE AN ARRAY OR ARRAY LIST FOR THESE 
-		//int AIcarrier = 5;
-		//int playerCarrier = 5;
-		//int AIbattleship = 4;
-		//int playerBattleship = 4;
-		//int AIcruiser = 3;
-		//int playerCruiser = 3;
-		//int AIsubmarine = 3;
-		//int playerSubmarine = 3;
-		//int AIdestroyer = 2;
-		//int playerDestroyer = 2;
 		
 		int index = -1;
-
+		System.out.println("shiphit " + shipHit);
 		if(shipHit == 2 || shipHit == 3)
 			index = shipHit-2;
 		else if(shipHit == 4 || shipHit == 5)
@@ -268,45 +309,27 @@ public class BattleshipGame implements BattleshipInterface {
 		if(player == 2)
 			index += 5;
 
-
-		// first 5 belong to player, next 5 to AI
-		//ArrayList<String> allShipNames = new ArrayList<>(10);
-
-		String[] allShipNames = new String[]{"Destroyer", "Submarine", "Cruiser", "Battleship", "Carrier"};
+		System.out.println("index: " + index + " player " + player);
 		
-		// first 5 belong to player, next 5 to ai NEED A FLAG SO THESE ARENT ADDED WITH EACH CALL
-		ArrayList<Integer> allShipsStatus = new ArrayList<>(10);
-		allShipsStatus.add(2); // index 0
-		allShipsStatus.add(3); // index 1
-		allShipsStatus.add(3); // index 2
-		allShipsStatus.add(4); // index 3
-		allShipsStatus.add(5); // index 4
-		allShipsStatus.add(2); // index 5
-		allShipsStatus.add(3); // index 6
-		allShipsStatus.add(3); // index 7
-		allShipsStatus.add(4); // index 8
-		allShipsStatus.add(5); // index 9
-		
-		int val = allShipsStatus.get(index);
-		allShipsStatus.set(index, val-1);
+		int val = allShipsStatus[index];
+		System.out.println("val " + val);
+		allShipsStatus[index] = val-1;
 
-		//loop looking for 0, if 0 return either ship number or name
-		//turn that ship int value to -1
-
-		String sunkenShip = "";
-		for(int i = 0; i < allShipsStatus.size(); i++) {
-			if(allShipsStatus.get(i) == 0) {
+		String sunkenShip = "";		
+		for(int i = 0; i < allShipsStatus.length; i++) {
+			System.out.println("Ship Status " + i + " " + allShipsStatus[i]);
+			if(allShipsStatus[i] == 0) {
 				if(player == 1)
 					sunkenShip = allShipNames[index];
 				else if(player == 2)
-					sunkenShip = allShipNames[index/2];
+					sunkenShip = allShipNames[index-5];
 				else
 					System.out.println("oh no");
-				allShipsStatus.set(i, -1);
+				allShipsStatus[i] = -1;
 			}
 		}
 
-		// to return ship name it would be allShipName[index] or [index/2] for player 2
+		System.out.println("sunkenShip = " + sunkenShip);
 
 		return sunkenShip;
 	}
@@ -341,7 +364,7 @@ public class BattleshipGame implements BattleshipInterface {
 
 		}
 
-		// FIXME GIVE OPTION TO START A NEW GAME OR EXIT
+		// FIXME GIVE OPTION TO START A NEW GAME OR EXIT - COULD ENHANCE TO HAVE A "n" response
 		String playAgain = JOptionPane.showInputDialog(null, "Would you like to play again? (y/n)");
 		if(playAgain.equals("y")) 
 			reset();
@@ -363,12 +386,12 @@ public class BattleshipGame implements BattleshipInterface {
 		grid = new int[totalRows][totalCols];
 		for(int row = 0; row < totalRows; row++)
 			for (int col = 0; col < totalCols; col++)
-				grid[row][col] = -1;
+				grid[row][col] = 0;
 
 		AIgrid = new int[totalRows][totalCols];
 		for(int row = 0; row < totalRows; row++)
 			for(int col = 0; col < totalCols; col++)
-				AIgrid[row][col] = -1;
+				AIgrid[row][col] = 0;
 
 		shipLocs = new int[totalRows][totalCols];
 		for(int row = 0; row < totalRows; row++)
@@ -391,10 +414,12 @@ public class BattleshipGame implements BattleshipInterface {
 	// FIXME WILL BE MODIFIED FOR GUI IMPLEMENTATION //// FOR DEMO PROGRAM THE AI FIRST SHOT TO BE A HIT?
 	public void playGame() {
 		Scanner scanner = new Scanner(System.in);
-		while(playerHits != 17 || AIhits != 17) {
+		//FIXME IS THIS CONDITIONAL WORKING?
+		while(playerHits != 17 && AIhits != 17) {
 			String gridLoc = "";
 			boolean validInput = false;
 			int hmm = 0;
+			System.out.println("PHITS: " + playerHits);
 
 			// player taking shot
 			while(validInput == false) {
@@ -409,10 +434,11 @@ public class BattleshipGame implements BattleshipInterface {
 			// received valid input
 			int y = convertLetterInput(gridLoc.substring(0, 1));
 			int x = Integer.parseInt(gridLoc.substring(1, 2));
-			while(shotFired(y, x) == false)
-				hmm++;
+			// FIXME MESSY FOR TESTING
+			System.out.println("Player coordinates (" + y + "," + x + ")");
+			shotFired(y, x);
 			
-			// AI taking shot
+			// AI taking shot		FIXME THERE IS AN ERROR IN HERE
 			Random rand = new Random();
 			if(smartShooting) {
 				int r = rand.nextInt(4);
@@ -420,12 +446,14 @@ public class BattleshipGame implements BattleshipInterface {
 					r = rand.nextInt(4);
 				shotFired(Integer.parseInt(smartShots[r].substring(0,1)),
 						Integer.parseInt(smartShots[r].substring(1,2)));
+				System.out.println("AI coordinates: " + smartShots[r]);
 			}
 			else {
 				int r1 = rand.nextInt(8);
 				int r2 = rand.nextInt(8);
-				while(shotFired(r1, r2) == false)
-					hmm++;
+				// FIXME MESSY FOR TESTING
+				System.out.println("AI coordinates: (" + r1 + "," + r2 + ")");
+				shotFired(r1, r2);
 			}
 
 			// displaying all grids
@@ -753,23 +781,47 @@ public class BattleshipGame implements BattleshipInterface {
 	 *
 	 */
 	public void placeShip(int a, int b, String dir, int shipLength) {
-		shipLocs[a][b] = shipLength+1;
+		if(placeCruiser)
+			shipLocs[a][b] = shipLength+4;
+		else 
+			shipLocs[a][b] = shipLength+1;
 		if(dir.equals("Left")) {			//FIXME CHANGE SHIP NUMBERS use ship length
-			for(int i = 1; i <= shipLength; i++)
-				shipLocs[a][b-i] = shipLength+1;
+			for(int i = 1; i <= shipLength; i++) { 
+				if(placeCruiser) 
+					shipLocs[a][b-i] = shipLength+4;
+				else 
+					shipLocs[a][b-i] = shipLength+1;
+			}
 		}
 		else if(dir.equals("Right")) {
-			for(int i = 1; i <= shipLength; i++)
-				shipLocs[a][b+i] = shipLength+1;
+			for(int i = 1; i <= shipLength; i++) {
+				if(placeCruiser) 
+					shipLocs[a][b+i] = shipLength+4;
+				else
+					shipLocs[a][b+i] = shipLength+1;
+			}
 		}
 		else if(dir.equals("Upwards")) {
-			for(int i = 1; i <= shipLength; i++)
-				shipLocs[a-i][b] = shipLength+1;
+			for(int i = 1; i <= shipLength; i++) {
+				if(placeCruiser) 
+					shipLocs[a-i][b] = shipLength+4;
+				else
+					shipLocs[a-i][b] = shipLength+1;
+			}
 		}
 		else if(dir.equals("Downwards")) {
-			for(int i = 1; i <= shipLength; i++)
-				shipLocs[a+i][b] = shipLength+1;
+			for(int i = 1; i <= shipLength; i++) {
+				if(placeCruiser) 
+					shipLocs[a+i][b] = shipLength+4;
+				else 
+					shipLocs[a+i][b] = shipLength+1;
+			}
 		}
+		
+		if(placeCruiser)
+			placeCruiser = false;
+		else if(shipLength+1 == 3) 
+			placeCruiser = true;
 	}
 
 	/**
@@ -801,10 +853,6 @@ public class BattleshipGame implements BattleshipInterface {
 		
 			if(AIshipLocs[r1][r2] == 0) {
 				open++;
-				// FIXME IF OUT OF BOUNDS NEED TO RESET TO 1 *****
-				//
-				// FIXME THE RETHINKING BEGINS HERE, NEED TO DO 2 SETTING ELSEWHERE 
-				//AIshipLocs[r1][r2] = 2;
 				// LOOKS IN THE UPWARD DIRECTION, IN RETHINKING, MOVE THE R1-I-1 TO FIRST IF CONDITIONAL
 				// FIXME CURSHIP MIGHT NEED +1
 				// ********************************************************************************************
@@ -823,7 +871,10 @@ public class BattleshipGame implements BattleshipInterface {
 					}
 					if(open == AIcurrentShip) {
 						for(int i = 0; i < AIcurrentShip; i++) {
-							AIshipLocs[r1-i][r2] = AIcurrentShip; //FIXME = 2,3,4,5 previously
+							if(placeCruiser)
+								AIshipLocs[r1-i][r2] = 6;
+							else
+								AIshipLocs[r1-i][r2] = AIcurrentShip; 
 						}
 					}
 
@@ -841,7 +892,10 @@ public class BattleshipGame implements BattleshipInterface {
 					}
 					if(open == AIcurrentShip) {
 						for(int i = 0; i < AIcurrentShip; i++) {
-							AIshipLocs[r1+i][r2] = AIcurrentShip;
+							if(placeCruiser)
+								AIshipLocs[r1+i][r2] = 6;
+							else
+								AIshipLocs[r1+i][r2] = AIcurrentShip;
 						}
 					}
 
@@ -859,7 +913,10 @@ public class BattleshipGame implements BattleshipInterface {
 					}
 					if(open == AIcurrentShip) {
 						for(int i = 0; i < AIcurrentShip; i++) {
-							AIshipLocs[r1][r2-i] = AIcurrentShip;
+							if(placeCruiser)
+								AIshipLocs[r1][r2-i] = 6;
+							else
+								AIshipLocs[r1][r2-i] = AIcurrentShip;
 						}
 					}
 				}
@@ -876,7 +933,10 @@ public class BattleshipGame implements BattleshipInterface {
 					}
 					if(open == AIcurrentShip) {
 						for(int i = 0; i < AIcurrentShip; i++) {
-							AIshipLocs[r1][r2+i] = AIcurrentShip;
+							if(placeCruiser)
+								AIshipLocs[r1][r2+i] = 6;
+							else
+								AIshipLocs[r1][r2+i] = AIcurrentShip;
 						}
 					}
 				}
@@ -884,11 +944,6 @@ public class BattleshipGame implements BattleshipInterface {
 					shipPlaced = false;
 					//System.out.println("We have an error.");
 				}	
-
-
-
-				//FIXME place ship start, then find direction it may go in
-				//may need a boolean if these ifs to say a ship was placed 
 				
 			} else {
 				shipPlaced = false;
@@ -897,16 +952,18 @@ public class BattleshipGame implements BattleshipInterface {
 			if(shipPlaced == true) {
 				if(AIshipsPlaced == 1 && AIfirstThreeLong == true) {
 					AIfirstThreeLong = false;
+					placeCruiser = true;
 					AIshipsPlaced++;
 				}
 				else {
 					AIshipsPlaced++;
 					AIcurrentShip++;
+					placeCruiser = false;
 				}
 			}
 		}
 		
-		System.out.println("The AI's ships have been place!");
+		System.out.println("The AI's ships have been placed!");
 		displayAIShips();
 	}
 
