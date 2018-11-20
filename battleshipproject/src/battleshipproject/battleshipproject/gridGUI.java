@@ -17,13 +17,13 @@ import javax.swing.border.EmptyBorder;
 public class gridGUI extends JFrame {
 	JButton enemyBoardButton = new JButton();
 	JButton playerBoardButton = new JButton();
-	//BattleshipGame game = new BattleshipGame();
+	BattleshipGame game = new BattleshipGame();
 	Color water = new Color(150,250,250);
 	Color hit = new Color(250,175,175);
 	Color sunk = new Color(175, 75, 75);
 	public gridGUI() {
 		gridSetup();
-		//buttonClick();
+		game.reset();
 	}
 	
 	private void gridSetup() {
@@ -31,11 +31,11 @@ public class gridGUI extends JFrame {
 		Container pane = getContentPane();
 		pane.setLayout(new GridLayout(17,8));
 		//Create Enemy Grid
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < 8; i++) { 
 			for (int j = 0; j < 8; j++) {
 			enemyBoardButton = new JButton(" ");
 			enemyBoardButton.setActionCommand("(" + i + ", " + j + ")");
-			enemyBoardButton.setBackground(Color.white);
+			enemyBoardButton.setBackground(water);
 			enemyBoardButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -88,19 +88,20 @@ public class gridGUI extends JFrame {
 			for (int b = 0; b < 8; b++) {
 			playerBoardButton = new JButton(" ");
 			playerBoardButton.setActionCommand("(" + a + ", " + b + ")");
-			playerBoardButton.setBackground(Color.white);
+			playerBoardButton.setBackground(water);
 			playerBoardButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					playerBoardButton = (JButton) e.getSource();
 					System.out.println(playerBoardButton.getActionCommand()+" test1");
-					
+					//game.placeShip(a, b, "Left", 3);
 				}
 			});
 			pane.add(playerBoardButton);
 			
 			}
 		}
+	    
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    pack();
 	    setVisible(true);
