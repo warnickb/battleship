@@ -396,6 +396,11 @@ public class BattleshipGame implements BattleshipInterface {
 		int rowCoord = Integer.parseInt(rememberOtherHit.substring(0, 1));
 		int colCoord = Integer.parseInt(rememberOtherHit.substring(1, 2));
 		
+		// updating initial hit variables
+		initialHitRow = rowCoord;
+		initialHitCol = colCoord;
+		initialShipHit = shipLocs[rowCoord][colCoord];
+		
 		// FIXME TESTING VERSION ONLY
 		System.out.println("RR " + rowCoord + " CR " + colCoord);
 
