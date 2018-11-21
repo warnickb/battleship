@@ -1,4 +1,4 @@
-package battleshipproject;
+//package battleshipproject;
 
 
 
@@ -18,6 +18,16 @@ public interface BattleshipInterface {
 	 * 	2) the location has already received fire
 	 */
 	public boolean shotFired(int row_pos, int col_pos);
+	
+
+	/**
+	 *
+	 *
+	 *
+	 *
+	 *
+	 */
+	public void rememberShip();
 
 
 	/**
@@ -59,12 +69,29 @@ public interface BattleshipInterface {
 	 */
 	public void playGame();
 
+	/**
+	 *
+	 *
+	 *
+	 *
+	 */
+	public void AIonly();
+
 
 	/**
 	 *	FIXME TWO METHODS TO PLACE SHIPS NOW
 	 *
 	 */
 	public void placePlayerShips();
+
+
+	/**
+	 *
+	 *
+	 *
+	 *
+	 */
+	public void presentationDemo();
 
 	/**
 	 *
