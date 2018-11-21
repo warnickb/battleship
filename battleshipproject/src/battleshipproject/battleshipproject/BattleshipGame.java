@@ -45,10 +45,12 @@ public class BattleshipGame implements BattleshipInterface {
 
 	/* variables used for AI "smartshooting" */
 	private boolean smartShooting;
+	private boolean shipHit;
 	private int smartHits;
 	private int initialHitRow;
 	private int initialHitCol;
 	private int initialShipHit;
+	private int brutalHits;
 	private String rememberOtherHit;
 	private String rememberOtherHit2;
 	private String rememberOtherHit3;
@@ -56,10 +58,12 @@ public class BattleshipGame implements BattleshipInterface {
 	/* determines AI level */
 	private String difficulty;
 
-	// ADD THESE TO RESET
+	// ADD THESE TO REset
 	private String[] smartShots = {"XX", "XX", "XX", "XX"};
 	private int[] allShipsStatus = new int[]{2, 3, 3, 4, 5, 2, 3, 3, 4, 5};
 	private String[] allShipNames = new String[]{"Destroyer", "Submarine", "Cruiser", "Battleship", "Carrier"};
+	// FIXME NOT DONE IMPLEMENTING
+	private int[] shipsRemembered = new int[]{0, 0, 0, 0};
 	
 
 	/***************************************************************************
@@ -80,10 +84,12 @@ public class BattleshipGame implements BattleshipInterface {
 		playerMisses = 0;
 		AImisses = 0;
 		smartShooting = false;
+		shipHit = false;
 		smartHits = 0;
 		initialHitRow = -2;
 		initialHitCol = -2;
 		initialShipHit = -2;
+		brutalHits = 0;
 		placeCruiser = false;
 		rememberOtherHit = "";
 		rememberOtherHit2 = "";
@@ -332,16 +338,34 @@ public class BattleshipGame implements BattleshipInterface {
 								// another ship was hit during smartshooting, remember coords
 								// AI could hit up to three additional ships while trying to sink initial ship
 								// hit a second ship during smartshooting
-								if(rememberOtherHit.length() == 0)
-									rememberOtherHit = String.valueOf(row_pos) + String.valueOf(col_pos);
-								// hit a third ship during smartshooting
-								else if(rememberOtherHit2.length() == 0)
-									rememberOtherHit2 = String.valueOf(row_pos) + String.valueOf(col_pos);
-								// hit a fourth ship during smartshooting
-								else
-									rememberOtherHit3 = String.valueOf(row_pos) + String.valueOf(col_pos);
 
+								// checking to see if ship has been hit yet
+								for(int i = 0; i < 4; i++)
+									if(shipsRemembered[i] == shipLocs[row_pos][col_pos])
+										// ship has already been hit
+										shipHit = true;
+								
+								// ship not yet remembered, remember it
+								if(!shipHit) {
+									for(int i = 0; i < 4; i++)
+										if(shipsRemembered[i] == 0)
+											shipsRemembered[i] = shipLocs[row_pos][col_pos];
+								}
 
+								// ship not yet remembered, remember it
+								if(!shipHit) {
+									if(rememberOtherHit.length() == 0)
+										rememberOtherHit = String.valueOf(row_pos) + String.valueOf(col_pos);
+									// hit a third ship during smartshooting
+									else if(rememberOtherHit2.length() == 0)
+										rememberOtherHit2 = String.valueOf(row_pos) + String.valueOf(col_pos);
+									// hit a fourth ship during smartshooting
+									else
+										rememberOtherHit3 = String.valueOf(row_pos) + String.valueOf(col_pos);
+								}
+								
+								// resetting shipHit to false
+								shipHit = false;
 							}
 						}
 
@@ -496,6 +520,11 @@ public class BattleshipGame implements BattleshipInterface {
 					System.out.println("oh no");
 				// adjusting ships life to -1 to indicate sunk
 				allShipsStatus[i] = -1;
+
+				// forgetting ship
+				for(int j = 0; j < 4; j++)
+					if(shipsRemembered[j] == shipHit)
+						shipsRemembered[j] = 0;
 			}
 		}
 
@@ -641,7 +670,7 @@ public class BattleshipGame implements BattleshipInterface {
 				shotFired(a, b);
 			}
 			// ensuring hit on first turn and after every 5 misses on brutal difficulty
-			else if(difficulty.equals("brutal") && (AIhits + AImisses == 0 || (AImisses % 5 == 0 && AImisses > 0))) {
+			else if(difficulty.equals("brutal") && AImisses % 5 == 0 && AImisses / 5 == brutalHits && smartShooting == false) {
 				out:
 				// searching for player ship
 				for(int i = 0; i < totalRows; i++)
@@ -729,7 +758,7 @@ public class BattleshipGame implements BattleshipInterface {
 				shotFired(a, b);
 			}
 			// ensuring hit on first turn and after every 5 misses on brutal difficulty
-			else if(difficulty.equals("brutal") && (AIhits + AImisses == 0 || (AImisses % 5 == 0 && AImisses > 0))) {
+			else if(difficulty.equals("brutal") && AImisses % 5 == 0 && AImisses / 5 == brutalHits && smartShooting == false) {
 				out:
 				// searching for player ship
 				for(int i = 0; i < totalRows; i++)
@@ -744,7 +773,11 @@ public class BattleshipGame implements BattleshipInterface {
 				System.out.println("brutal " + a + "," + b);
 
 				// firing shot
+				brutalHits++;
 				shotFired(a, b);
+
+				// FIXME TESTING VERSION ONLY
+				System.out.println("bhits " + brutalHits);
 				
 			}
 			// firing with smartshooting
