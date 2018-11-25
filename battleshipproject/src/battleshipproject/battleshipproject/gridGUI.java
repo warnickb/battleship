@@ -21,10 +21,14 @@ public class gridGUI extends JFrame {
 	Color water = new Color(150,250,250);
 	Color hit = new Color(250,175,175);
 	Color sunk = new Color(175, 75, 75);
+	
+	
 	public gridGUI() {
 		gridSetup();
 		game.reset();
+		new shipGUI();
 	}
+	
 	
 	private void gridSetup() {
 		//create GUI and set Layout
