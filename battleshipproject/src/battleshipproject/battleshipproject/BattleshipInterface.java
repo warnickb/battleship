@@ -1,4 +1,4 @@
-//package battleshipproject;
+package battleshipproject;
 
 /********************************************************************************
  * Battleship Game Logic Interface
