@@ -7,7 +7,7 @@ import java.util.*;
  * BattleshipGame Logic Class
  *
  * @author Justin Perticone
- * @version November 20, 2018
+ * @version November 26, 2018
  **************************************************************************************/
 
 public class BattleshipGame implements BattleshipInterface {
@@ -58,11 +58,10 @@ public class BattleshipGame implements BattleshipInterface {
 	/* determines AI level */
 	private String difficulty;
 
-	// ADD THESE TO REset
+	// FIXME
 	private String[] smartShots = {"XX", "XX", "XX", "XX"};
 	private int[] allShipsStatus = new int[]{2, 3, 3, 4, 5, 2, 3, 3, 4, 5};
 	private String[] allShipNames = new String[]{"Destroyer", "Submarine", "Cruiser", "Battleship", "Carrier"};
-	// FIXME NOT DONE IMPLEMENTING
 	private int[] shipsRemembered = new int[]{0, 0, 0, 0};
 	
 
@@ -75,25 +74,25 @@ public class BattleshipGame implements BattleshipInterface {
 		totalRows = 8;
 		totalCols = 8;
 		gridSize = 64;
-		difficulty = "brutal";
 
 		// move these to reset FIXME
-		currentPlayer = 1;
-		playerHits = 0;
-		AIhits = 0;
-		playerMisses = 0;
-		AImisses = 0;
-		smartShooting = false;
-		shipHit = false;
-		smartHits = 0;
-		initialHitRow = -2;
-		initialHitCol = -2;
-		initialShipHit = -2;
-		brutalHits = 0;
-		placeCruiser = false;
-		rememberOtherHit = "";
-		rememberOtherHit2 = "";
-		rememberOtherHit3 = "";
+		//difficulty = "brutal";
+		//currentPlayer = 1;
+		//playerHits = 0;
+		//AIhits = 0;
+		//playerMisses = 0;
+		//AImisses = 0;
+		//smartShooting = false;
+		//shipHit = false;
+		//smartHits = 0;
+		//initialHitRow = -2;
+		//initialHitCol = -2;
+		//initialShipHit = -2;
+		//brutalHits = 0;
+		//placeCruiser = false;
+		//rememberOtherHit = "";
+		//rememberOtherHit2 = "";
+		//rememberOtherHit3 = "";
 
 		reset();		
 
@@ -115,20 +114,17 @@ public class BattleshipGame implements BattleshipInterface {
 	//CUSTOM GRID SIZE??
 	//MOVEABLE SHIPS??
 	//POWER-UPS??
-	
-	// FIXME USE ECLIPSE FOR THESE * LINES 	
 
-	/***************************************************************************
+	/****************************************************************************
 	 * Determines if location of fire is valid
-	 * If valid, a shot will be fired to location
-	 * Adjusts currentPlayer
+	 * Adjusts current player and updates grids
 	 *
-	 * @param row_pos
-	 * @param col_pos
+	 * @param row_pos - row value
+	 * @param col_pos - column value
 	 * @return true when location is valid, otherwise false because
 	 * 	1) the location is out of bounds
 	 * 	2) the location has already received fire
-	 */
+	 ****************************************************************************/
 	public boolean shotFired(int row_pos, int col_pos) {  // THIS GETS CALLED WHEN A BUTTON ON THE GUI IS CLICKED
 		
 		boolean playerShipSunk = false;
@@ -408,12 +404,12 @@ public class BattleshipGame implements BattleshipInterface {
 	}
 
 
-	/**
-	 *
-	 *
-	 *
-	 *
-	 */
+	/****************************************************************************
+	 * Used to enhance the AI
+	 * Remembers any ships hit while working to sink the ship
+	 * it first hit
+	 * Remembers up to three ships on top of the ship initially hit
+	 ****************************************************************************/
 	public void rememberShip() {
 		
 		// getting coordinates of other ship hit during smartshooting
@@ -469,11 +465,15 @@ public class BattleshipGame implements BattleshipInterface {
 			
 	}
 
-	/**
+	
+	/****************************************************************************
+	 * Checks on the status of all ships to see if any have been sunk
+	 * Method is called after every hit by both the player and the AI
 	 *
-	 *
-	 *
-	 */
+	 * @param shipHit - the value used to uniquely identify each ship
+	 * @param player - 1 = player, 2 = AI
+	 * @return the name of the ship sunk, empty string if no ship sunk
+	 ****************************************************************************/
 	public String sunkStatus(int shipHit, int player) {
 	
 		// determining proper index based on the ship hit and which player fired	
@@ -489,7 +489,7 @@ public class BattleshipGame implements BattleshipInterface {
 		else if(shipHit == 4 || shipHit == 5)
 			index = shipHit-1;
 		// adjustment for the Cruiser
-		else if(shipHit == 6) // 6 is second 3 long boat (Cruisser)
+		else if(shipHit == 6) // 6 is second 3 long boat (Cruiser)
 			index = shipHit-4;
 		// adjustment fot the AI
 		if(player == 2)
@@ -535,21 +535,20 @@ public class BattleshipGame implements BattleshipInterface {
 		return sunkenShip;
 	}
 
-	/**
+	
+	/****************************************************************************
 	 * Returns whether it is the player's turn or the AI's turn
 	 *
-	 * @return 0 = player, 1 = AI	// FIXME MAY NOT NEED
-	 */
+	 * @return 1 = player, 2 = AI
+	 ****************************************************************************/
 	public int currentPlayer() {
 		return currentPlayer;
 	}
 
 
-	/** 
-	 * Returns the ID of the winning player //FIXME GOING TO BE MORE THAN THIS, INCLUDE TOTAL HITS/MISSES
-	 *
-	 * @return 0 = player, 1 = AI, -1 = winner currently undetermined
-	 */
+	/****************************************************************************
+	 * Method executed once all ships have been sunk on one side
+	 ****************************************************************************/
 	public void getWinner() { 
 		// player won the game
 		if(playerHits == 17) {
@@ -567,16 +566,36 @@ public class BattleshipGame implements BattleshipInterface {
 		String playAgain = JOptionPane.showInputDialog(null, "Would you like to play again? (y/n)");
 		if(playAgain.equals("y")) 
 			reset();
-		else
+		else if(playAgain.equals("n"))
 			System.out.println("Thank you for playing!!");
+		else
+			System.out.println("Invalid input. Enter \"y\" or \"n\" next time!");
 
 	}
 
 
-	/**
-	 * Reset the game
-	 */
+	/****************************************************************************
+	 * Resets the game
+	 ****************************************************************************/
 	public void reset() {
+
+		difficulty = "brutal";
+		currentPlayer = 1;
+		playerHits = 0;
+		AIhits = 0;
+		playerMisses = 0;
+		AImisses = 0;
+		smartShooting = false;
+		shipHit = false;
+		smartHits = 0;
+		initialHitRow = -2;
+		initialHitCol = -2;
+		initialShipHit = -2;
+		brutalHits = 0;
+		placeCruiser = false;
+		rememberOtherHit = "";
+		rememberOtherHit2 = "";
+		rememberOtherHit3 = "";
 
 		// setting up the firing grid and setting all coordinates to 0
 		grid = new int[totalRows][totalCols];
@@ -617,7 +636,9 @@ public class BattleshipGame implements BattleshipInterface {
 
 	}
 
-	// FIXME THIS ENTIRE METHOD NEEDS TO BE MOVED TO GUI AND MODIFIED
+	/****************************************************************************
+	 * Plays out an entire game of Battleship until there is a winner
+	 ****************************************************************************/
 	public void playGame() {
 		Scanner scanner = new Scanner(System.in);
 
@@ -724,12 +745,11 @@ public class BattleshipGame implements BattleshipInterface {
 	}
 
 
-	/**
-	 *
-	 *
-	 *
-	 *
-	 */
+	/****************************************************************************
+	 * Used in the testing version only 
+	 * Simulates a game where only the AI can fire
+	 * Able to analyze the "thought process" of the AI
+	 ****************************************************************************/
 	public void AIonly() {
 
 		while(AIhits != 10) {
@@ -739,13 +759,52 @@ public class BattleshipGame implements BattleshipInterface {
 
 			int a = 0;
 			int b = 0;
+			int c = 0;
+			boolean validShip = false;
+			
+			// finding a ship to shoot at random
+			if((difficulty.equals("challenge") && AIhits + AImisses == 0) || 
+					difficulty.equals("brutal")) {
+		        	
+				while(!validShip) {
+
+					// index offset 
+					int index = -1;
+
+					// choosing a random ship
+					c = rand.nextInt(5) + 2;
+					
+					// adjustment for the Destroyer and Submarine	
+					if(c == 2 || c == 3)
+						index = c-2;
+					// adjustment for the Battleship and Carrier
+					else if(c == 4 || c == 5)
+						index = c-1;
+					// adjustment for the Cruiser
+					else if(c == 6) // 6 is second 3 long boat (Cruiser)
+						index = c-4;
+					// adjustment fot the AI
+					index += 5;
+					
+					// if ship still has life, it is valid
+					if(allShipsStatus[index] > 0)
+						validShip = true;
+
+				}
+
+			}
+
+			// FIXME TESTING VERSION ONLY
+			System.out.println("c = " + c);
+
+
 			// ensuring hit on first turn on challenge difficulty
 			if(difficulty.equals("challenge") && AIhits + AImisses == 0) {
 				out:
-				// searching for player ship
+				// searching for player ship		- FIXME HIT RANDOM SHIP
 				for(int i = 0; i < totalRows; i++)
 					for(int j = 0; j < totalCols; j++)
-						if(shipLocs[i][j] >= 2 && AIgrid[i][j] == 0) {
+						if(shipLocs[i][j] == c && AIgrid[i][j] == 0) {
 							a = i;
 							b = j;
 							break out;
@@ -763,7 +822,7 @@ public class BattleshipGame implements BattleshipInterface {
 				// searching for player ship
 				for(int i = 0; i < totalRows; i++)
 					for(int j = 0; j < totalCols; j++)
-						if(shipLocs[i][j] >= 2 && AIgrid[i][j] == 0) {
+						if(shipLocs[i][j] == c && AIgrid[i][j] == 0) {
 							a = i;
 							b = j;
 							break out;
@@ -813,11 +872,10 @@ public class BattleshipGame implements BattleshipInterface {
 
 	}
 	
-	/**
-	 *
-	 *
-	 *
-	 */
+	
+	/****************************************************************************
+	 * Allows the player to place their ships 
+	 ****************************************************************************/
 	public void placePlayerShips() {
 
 		int playerShipsPlaced = 0;
@@ -1099,12 +1157,10 @@ public class BattleshipGame implements BattleshipInterface {
 		displayPlayerShips();
 	}
 
-	/**
-	 *
-	 *
-	 *
-	 *
-	 */
+	
+	/****************************************************************************
+	 * Used specifically to demo the project in class
+	 ****************************************************************************/
 	public void presentationDemo() {
 
 		// placing player Carrier
@@ -1131,11 +1187,13 @@ public class BattleshipGame implements BattleshipInterface {
 		displayPlayerShips();
 	}
 
-	/**
+	
+	/****************************************************************************
+	 * Checks to see if the player's letter input for row is valid
 	 *
-	 *
-	 *
-	 */
+	 * @param letter - the letter the player input for row
+	 * @return true if valid, false otherwise
+	 ****************************************************************************/
 	public boolean validLetter(String letter) { 
 		String validLetters = "ABCDEFGH";
 		for(int i = 0; i < validLetters.length(); i++)
@@ -1144,11 +1202,13 @@ public class BattleshipGame implements BattleshipInterface {
 		return false;
 	}
 
-	/**
+	
+	/****************************************************************************
+	 * Checks to see if the player's number input for column is valid
 	 *
-	 *
-	 *
-	 */
+	 * @param number - the number the player input for column
+	 * @return true if valid, false otherwise
+	 ****************************************************************************/
 	public boolean validNumber(int number) {
 		for(int i = 0; i < 8; i++)
 			if(number == i)
@@ -1156,11 +1216,14 @@ public class BattleshipGame implements BattleshipInterface {
 		return false;
 	}
 
-	/**
+	
+	/****************************************************************************
+	 * Converts valid player letter input into the correct number value
+	 * Number value needed to access the 2D array properly
 	 *
-	 *
-	 *
-	 */
+	 * @param letter - the number the player input for row
+	 * @return the corresponding number value for letter entered
+	 ****************************************************************************/
 	public int convertLetterInput(String letter) {
 		switch (letter) {
 			case "A": 
@@ -1185,11 +1248,16 @@ public class BattleshipGame implements BattleshipInterface {
 		return -1;
 	}
 
-	/**
+	
+	/****************************************************************************
+	 * Places a player's ship once it has checked for valid location
+	 * Called from placePlayerShips()
 	 *
-	 *
-	 *
-	 */
+	 * @param a - the row coordinate of the ship's starting point
+	 * @param b - the column coordinate of the ship's starting point
+	 * @param dir - the direction the rest of the ship will go 
+	 * @param shipLength - the length of the ship being placed
+	 ****************************************************************************/
 	public void placeShip(int a, int b, String dir, int shipLength) {
 		// cruiser has a value of 6
 		if(placeCruiser)
@@ -1244,11 +1312,10 @@ public class BattleshipGame implements BattleshipInterface {
 			placeCruiser = true;
 	}
 
-	/**
-	 *
-	 *
-	 *
-	 */
+	
+	/****************************************************************************
+	 * Places the AI's ships at random
+	 ****************************************************************************/
 	public void placeAIShips() {
 
 		int AIshipsPlaced = 0;
@@ -1407,11 +1474,12 @@ public class BattleshipGame implements BattleshipInterface {
 		displayAIShips();
 	}
 
-	/**
-	 *
-	 *
-	 *
-	 */
+	
+	/****************************************************************************
+	 * Displays the 2D integer array that shows the player's ship locations
+	 * 2 = Destroyer, 3 = Submarine, 4 = Battleship, 5 = Carrier, 6 = Cruiser
+	 * 0 = open water
+	 ****************************************************************************/
 	public void displayPlayerShips() {
 		System.out.println("Displaying the Player's Ship Placement:");
 		for(int row = 0; row < totalRows; row++) {
@@ -1424,11 +1492,12 @@ public class BattleshipGame implements BattleshipInterface {
 		}
 	}
 
-	/**
-	 *
-	 *
-	 *
-	 */
+	
+	/****************************************************************************
+	 * Displays the 2D integer array that shows the AI's ship locations
+	 * 2 = Destroyer, 3 = Submarine, 4 = Battleship, 5 = Carrier, 6 = Cruiser
+	 * 0 = open water
+	 ****************************************************************************/
 	public void displayAIShips() {
 		System.out.println("Displaying AI's Ship Placement:");
 		for(int row = 0; row < totalRows; row++) {
@@ -1441,11 +1510,11 @@ public class BattleshipGame implements BattleshipInterface {
 		}
 	}
 
-	/**
-	 *
-	 *
-	 *
-	 */
+	
+	/****************************************************************************
+	 * Displays the 2D integer array that shows the player's shots taken
+	 * 0 = open water, 1 = miss, 2 = hit
+	 ****************************************************************************/
 	public void displayPlayerGrid() {
 		System.out.println("Displaying the Player's Grid:");
 		for(int row = 0; row < totalRows; row++) {
@@ -1458,11 +1527,11 @@ public class BattleshipGame implements BattleshipInterface {
 		}
 	}
 
-	/**
-	 *
-	 *
-	 *
-	 */
+	
+	/****************************************************************************
+	 * Displays the 2D integer array that shows the AI's shots taken
+	 * 0 = open water, 1 = miss, 2 = hit
+	 ****************************************************************************/
 	public void displayAIGrid() {
 		System.out.println("Displaying the AI's Grid:");
 		for(int row = 0; row < totalRows; row++) {
@@ -1476,26 +1545,23 @@ public class BattleshipGame implements BattleshipInterface {
 	}
 
 
-
-	/**
+	/****************************************************************************
 	 * Getter method for rows on the grid
 	 *
 	 * @return number of rows on the grid
-	 */
+	 ****************************************************************************/
 	public int getRows() {
 		return totalRows;
 	}
 
 
-	/**
+	/****************************************************************************
 	 * Getter method for columns on the grid
 	 *
 	 * @return number of columns on the grid
-	 */
+	 ****************************************************************************/
 	public int getCols() {
 		return totalCols;
 	}
-
-
 
 }

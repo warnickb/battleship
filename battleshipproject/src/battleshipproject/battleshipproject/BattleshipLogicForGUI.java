@@ -2,12 +2,13 @@
 
 import javax.swing.*;
 import java.util.*;
+import java.awt.*;
 
 /**************************************************************************************
  * BattleshipGame Logic Class For Use With GUI
  *
  * @author Justin Perticone
- * @version November 20, 2018
+ * @version November 26, 2018
  **************************************************************************************/
 
 public class BattleshipLogicForGUI implements BattleshipInterface {
@@ -58,10 +59,17 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 	/* determines AI level */
 	private String difficulty;
 
-	// ADD THESE TO REset
+	//FIXME FIXME FIXME WILL NEED TO MOVE THESE TO WORK WITH RESET
+	/* used to help AI sink a ship after it lands a hit */
 	private String[] smartShots = {"XX", "XX", "XX", "XX"};
+
+	/* keeps track of the life of each ship of both the player and AI */
 	private int[] allShipsStatus = new int[]{2, 3, 3, 4, 5, 2, 3, 3, 4, 5};
+
+	/* array with all the names of the ships */ 
 	private String[] allShipNames = new String[]{"Destroyer", "Submarine", "Cruiser", "Battleship", "Carrier"};
+
+	/* array of ships hit aside from the first ship while AI is trying to sink a ship */ 
 	private int[] shipsRemembered = new int[]{0, 0, 0, 0};
 	
 
@@ -74,31 +82,35 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 		totalRows = 8;
 		totalCols = 8;
 		gridSize = 64;
-		difficulty = "brutal";
+		//difficulty = "brutal";
 
 		// move these to reset FIXME
-		currentPlayer = 1;
-		playerHits = 0;
-		AIhits = 0;
-		playerMisses = 0;
-		AImisses = 0;
-		smartShooting = false;
-		shipHit = false;
-		smartHits = 0;
-		initialHitRow = -2;
-		initialHitCol = -2;
-		initialShipHit = -2;
-		brutalHits = 0;
-		placeCruiser = false;
-		rememberOtherHit = "";
-		rememberOtherHit2 = "";
-		rememberOtherHit3 = "";
+		//difficulty = "brutal";	//FIXME NEED PARAMETER FOR DIFFICULTY
+		//currentPlayer = 1;
+		//playerHits = 0;
+		//AIhits = 0;
+		//playerMisses = 0;
+		//AImisses = 0;
+		//smartShooting = false;
+		//shipHit = false;
+		//smartHits = 0;
+		//initialHitRow = -2;
+		//initialHitCol = -2;
+		//initialShipHit = -2;
+		//brutalHits = 0;
+		//placeCruiser = false;
+		//rememberOtherHit = "";
+		//rememberOtherHit2 = "";
+		//rememberOtherHit3 = "";
 
 		reset();		
 
 	}
 
-	// FIXME INCOMPLETE
+
+	/***************************************************************************
+	 * FIXME I THINK IT MIGHT BE BEST TO JUST HAVE DIFFICULTY DECIDED IN RESET
+	 ***************************************************************************/
 	public BattleshipLogicForGUI(String difficulty) {
 
 		totalRows = 8;
@@ -110,24 +122,16 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 
 	}
 
-	//WILL NEED MORE CONSTRUCTORS FOR ADDITIONAL GAME MODES
-	//CUSTOM GRID SIZE??
-	//MOVEABLE SHIPS??
-	//POWER-UPS??
-	
-	// FIXME USE ECLIPSE FOR THESE * LINES 	
 
-	/***************************************************************************
+	/****************************************************************************
 	 * Determines if location of fire is valid
-	 * If valid, a shot will be fired to location
-	 * Adjusts currentPlayer
 	 *
-	 * @param row_pos
-	 * @param col_pos
+	 * @param row_pos - row value
+	 * @param col_pos - column value
 	 * @return true when location is valid, otherwise false because
 	 * 	1) the location is out of bounds
 	 * 	2) the location has already received fire
-	 */
+	 ****************************************************************************/
 	public boolean shotFired(int row_pos, int col_pos) {  // THIS GETS CALLED WHEN A BUTTON ON THE GUI IS CLICKED
 		
 		boolean playerShipSunk = false;
@@ -143,7 +147,8 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 				// FIXME TESTING VERSION ONLY
 				System.out.println("loc " + row_pos + " " + col_pos);
 
-				System.out.println("You have already fired to this location!");
+				JOptionPane.showMessageDialog(null, "You have already fired to this location!");
+
 				return false; // FIXME GUI WILL LOOP UNTIL TRUE IS RETURNED INDICATING A SUCCESSFUL SHOT
 			}
 			else if(row_pos > -1 && col_pos > -1 && row_pos < totalRows && col_pos < totalCols) {
@@ -185,7 +190,7 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 
 					// ship has been sunk
 					if(shipSunk.length() > 1) 
-						System.out.println("The enemies " + shipSunk + " has been sunk!!");
+						JOptionPane.showMessageDialog(null, "The enemies " + shipSunk + " has been sunk!!");
 
 					// update currentPlayer
 					if(currentPlayer == 2)
@@ -195,7 +200,7 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 					return true;
 				}
 				else {
-					System.out.println("Something bad happened.");
+					JOptionPane.showMessageDialog(null, "Error 1");
 				}
 			}
 		}
@@ -302,7 +307,7 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 										smartShots[1] = "XX"; // reached right boarder
 								}
 								else 
-									System.out.println("Should not reach here.");
+									JOptionPane.showMessageDialog(null, "Error 2");
 								// AI has learned direction of the ship - only needs left and right coords now
 								smartShots[2] = "XX";
 								smartShots[3] = "XX";
@@ -328,7 +333,7 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 										smartShots[3] = "XX"; // reached bottom boarder
 								}
 								else 
-									System.out.println("Should not reach here.");
+									JOptionPane.showMessageDialog(null, "Error 3");
 								// AI has learned direction of the ship - only needs above and below coords now
 								smartShots[0] = "XX";
 								smartShots[1] = "XX";
@@ -375,7 +380,7 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 
 					// ship has been sunk
 					if(shipSunk.length() > 1) {
-						System.out.println("Your " + shipSunk + " has been sunk!!");
+						JOptionPane.showMessageDialog(null, "Your " + shipSunk + " has been sunk!!");
 						// remember coordinates of second ship hit during smartshooting 
 						if(rememberOtherHit.length() == 2)
 							rememberShip();
@@ -394,25 +399,25 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 					return true;
 				}
 				else {
-					System.out.println("Something bad happened.");
+					JOptionPane.showMessageDialog(null, "Error 4");
 				}
 			}
 
 		} else {
-			System.out.println("Something bad happened.");
+			JOptionPane.showMessageDialog(null, "Error 5");
 		}
 		
-		System.out.println("should not reach here");
+		JOptionPane.showMessageDialog(null, "Error 6");
 		return false;
 	}
 
 
-	/**
-	 *
-	 *
-	 *
-	 *
-	 */
+	/****************************************************************************
+	 * Used to enhance the AI
+	 * Remembers any ships hit while working to sink the ship
+	 * it first hit
+	 * Remembers up to three ships on top of the ship initially hit
+	 ****************************************************************************/
 	public void rememberShip() {
 		
 		// getting coordinates of other ship hit during smartshooting
@@ -468,11 +473,15 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 			
 	}
 
-	/**
+	
+	/****************************************************************************
+	 * Checks on the status of all ships to see if any have been sunk
+	 * Method is called after every hit by both the player and the AI
 	 *
-	 *
-	 *
-	 */
+	 * @param shipHit - the value used to uniquely identify each ship
+	 * @param player - 1 = player, 2 = AI
+	 * @return the name of the ship sunk, empty string if no ship sunk
+	 ****************************************************************************/
 	public String sunkStatus(int shipHit, int player) {
 	
 		// determining proper index based on the ship hit and which player fired	
@@ -516,7 +525,7 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 				else if(player == 2)
 					sunkenShip = allShipNames[index-5];
 				else
-					System.out.println("oh no");
+					JOptionPane.showMessageDialog(null, "Error 7");
 				// adjusting ships life to -1 to indicate sunk
 				allShipsStatus[i] = -1;
 
@@ -534,48 +543,84 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 		return sunkenShip;
 	}
 
-	/**
+	
+	/****************************************************************************
 	 * Returns whether it is the player's turn or the AI's turn
 	 *
-	 * @return 0 = player, 1 = AI	// FIXME MAY NOT NEED
-	 */
+	 * @return 1 = player, 2 = AI
+	 ****************************************************************************/
 	public int currentPlayer() {
 		return currentPlayer;
 	}
 
 
-	/** 
-	 * Returns the ID of the winning player //FIXME GOING TO BE MORE THAN THIS, INCLUDE TOTAL HITS/MISSES
-	 *
-	 * @return 0 = player, 1 = AI, -1 = winner currently undetermined
-	 */
+	/****************************************************************************
+	 * Method executed once all ships have been sunk on one side
+	 * Asks user if they would like to play again - FIXME
+	 ****************************************************************************/
 	public void getWinner() { 
 		// player won the game
 		if(playerHits == 17) {
-			System.out.println("Player has won!!");
+			JOptionPane.showMessageDialog(null, "You have won the game!!");
 		} 
 		// AI won the game
 		else if (AIhits == 17) {
-			System.out.println("The computer has won!!");
+			JOptionPane.showMessageDialog(null, "The enemy has won the game!!");
 		}
 		else 
-			System.out.println("what the heck happened");
+			JOptionPane.showMessageDialog(null, "Error 8");
 
-		// FIXME GIVE OPTION TO START A NEW GAME OR EXIT - COULD ENHANCE TO HAVE A "n" response
-		// FIXME NEED TO REDESIGN CONSTRUCTOR AND RESET BEFORE THIS WILL WORK
+		// asking user if they would like to play again
 		String playAgain = JOptionPane.showInputDialog(null, "Would you like to play again? (y/n)");
 		if(playAgain.equals("y")) 
+			// user wants to play another game
 			reset();
-		else
-			System.out.println("Thank you for playing!!");
+		else if(playAgain.equals("n")) {
+			JOptionPane.showMessageDialog(null, "Thank you for playing!!");
+			// FIXME ADD CLOSING PROGRAM TO GUI
+		}
+		else 
+			JOptionPane.showMessageDialog(null, "Invalid input. Enter \"y\" or \"n\" next time!");
 
 	}
 
 
-	/**
-	 * Reset the game
-	 */
+	/****************************************************************************
+	 * Resets the game
+	 ****************************************************************************/
 	public void reset() {
+
+		difficulty = "brutal";	//FIXME NEED PARAMETER FOR DIFFICULTY or implement in constructor
+		currentPlayer = 1;
+		playerHits = 0;
+		AIhits = 0;
+		playerMisses = 0;
+		AImisses = 0;
+		smartShooting = false;
+		shipHit = false;
+		smartHits = 0;
+		initialHitRow = -2;
+		initialHitCol = -2;
+		initialShipHit = -2;
+		brutalHits = 0;
+		placeCruiser = false;
+		rememberOtherHit = "";
+		rememberOtherHit2 = "";
+		rememberOtherHit3 = "";
+	
+		// FIXME CREATE A HELPER METHOD TO RESET THESE
+		/* used to help AI sink a ship after it lands a hit */
+		//smartShots = {"XX", "XX", "XX", "XX"};
+	
+		/* keeps track of the life of each ship of both the player and AI */
+		//allShipsStatus = new int[]{2, 3, 3, 4, 5, 2, 3, 3, 4, 5};
+
+		/* array with all the names of the ships */ 
+		//allShipNames = new String[]{"Destroyer", "Submarine", "Cruiser", "Battleship", "Carrier"};
+
+		/* array of ships hit aside from the first ship while AI is trying to sink a ship */ 
+		//shipsRemembered = new int[]{0, 0, 0, 0};
+	
 
 		// setting up the firing grid and setting all coordinates to 0
 		grid = new int[totalRows][totalCols];
@@ -602,125 +647,161 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 				AIshipLocs[row][col] = 0;
 		
 		// player will now place their ships
-		System.out.println("Time to place your ships!");
-		//placePlayerShips();
-		presentationDemo();
+		JOptionPane.showMessageDialog(null, "Time to place your ships!");
+		placePlayerShips();
+		//presentationDemo();
 
 		// AI ships will now be placed at random
-		System.out.println("The AI's ships will now be placed at random...");
+		JOptionPane.showMessageDialog(null, "The AI's ships will now be placed at random...");
 		placeAIShips();
 
 		// begin the game
 		//playGame();
-		AIonly();
+		//AIonly();
 
 	}
 
 	// FIXME THIS ENTIRE METHOD NEEDS TO BE MOVED TO GUI AND MODIFIED
-	public void playGame() {
-		Scanner scanner = new Scanner(System.in);
-
-		// game is played until all ships are sunk on one side
-		while(playerHits != 17 && AIhits != 17) {
-			String gridLoc = "";
-			boolean validInput = false;
-
-			System.out.println("Input coordinates to fire to: ");
-
-			// player taking shot after valid input
-			while(validInput == false) {
-				gridLoc = scanner.next();
-				if(gridLoc.length() == 2 && validLetter(gridLoc.substring(0, 1)) == true && validNumber(Integer.parseInt(gridLoc.substring(1, 2))))
-					validInput = true;
-				else
-					System.out.println("Invalid input");
-			}
-			// received valid input - converting input to ints
-			int y = convertLetterInput(gridLoc.substring(0, 1));
-			int x = Integer.parseInt(gridLoc.substring(1, 2));
-			
-			// FIXME TESTING VERSION ONLY
-			System.out.println("Player coordinates (" + y + "," + x + ")");
-
-			// firing shot
-			shotFired(y, x);
-			
-			// AI taking shot	
-			Random rand = new Random();
-
-			int a = 0;
-			int b = 0;
-			// ensuring hit on first turn on challenge difficulty
-			if(difficulty.equals("challenge") && AIhits + AImisses == 0) {
-				out:
-				// searching for player ship
-				for(int i = 0; i < totalRows; i++)
-					for(int j = 0; j < totalCols; j++)
-						if(shipLocs[i][j] >= 2 && AIgrid[i][j] == 0) {
-							a = i;
-							b = j;
-							break out;
-						}
-
-				// FIXME TESTING VERSION ONLY
-				System.out.println("challenge " + a + "," + b);
-
-				// firing shot
-				shotFired(a, b);
-			}
-			// ensuring hit on first turn and after every 5 misses on brutal difficulty
-			else if(difficulty.equals("brutal") && AImisses % 5 == 0 && AImisses / 5 == brutalHits && smartShooting == false) {
-				out:
-				// searching for player ship
-				for(int i = 0; i < totalRows; i++)
-					for(int j = 0; j < totalCols; j++)
-						if(shipLocs[i][j] >= 2 && AIgrid[i][j] == 0) {
-							a = i;
-							b = j;
-							break out;
-						}
-
-				// FIXME TESTING VERSION ONLY
-				System.out.println("brutal " + a + "," + b);
-
-				// firing shot
-				shotFired(a, b);
-				
-			}
-			// firing with smartshooting
-			else if(smartShooting) {
-				int r = rand.nextInt(4);
-				while(smartShots[r].equals("XX"))
-					r = rand.nextInt(4);
-				shotFired(Integer.parseInt(smartShots[r].substring(0,1)),
-						Integer.parseInt(smartShots[r].substring(1,2)));
-
-				// FIXME TESTING VERSION ONLY 
-				System.out.println("AI coordinates: " + smartShots[r]);
-			}
-			// default firing at random
-			else {
-				// generating random coordinates
-				int r1 = rand.nextInt(8);
-				int r2 = rand.nextInt(8);
-
-				// FIXME TESTING VERSION ONLY
-				System.out.println("AI coordinates: (" + r1 + "," + r2 + ")");
-
-				// firing shot
-				shotFired(r1, r2);
-			}
-
-			// displaying all grids
-			displayPlayerShips();
-			displayAIShips();
-			displayPlayerGrid();
-			displayAIGrid();
-
-		}
-		// game is over
-		getWinner();
-	}
+	public void playGame() {}
+//		Scanner scanner = new Scanner(System.in);
+//
+//		// game is played until all ships are sunk on one side
+//		while(playerHits != 17 && AIhits != 17) {
+//			String gridLoc = "";
+//			boolean validInput = false;
+//
+//			System.out.println("Input coordinates to fire to: ");
+//
+//			// player taking shot after valid input
+//			while(validInput == false) {
+//				gridLoc = scanner.next();
+//				if(gridLoc.length() == 2 && validLetter(gridLoc.substring(0, 1)) == true && validNumber(Integer.parseInt(gridLoc.substring(1, 2))))
+//					validInput = true;
+//				else
+//					System.out.println("Invalid input");
+//			}
+//
+//			// received valid input - converting input to ints
+//			int y = convertLetterInput(gridLoc.substring(0, 1));
+//			int x = Integer.parseInt(gridLoc.substring(1, 2));
+//			
+//			// FIXME TESTING VERSION ONLY
+//			System.out.println("Player coordinates (" + y + "," + x + ")");
+//
+//			// firing shot
+//			shotFired(y, x);
+//			
+//			// AI taking shot	
+//			Random rand = new Random();
+//
+//			int a = 0;
+//			int b = 0;
+//			int c = 0;
+//			boolean validShip = false;
+//
+//			// finding a ship to shoot at random 
+//			if((difficulty.equals("challenge") && AIhits + AImisses == 0) ||
+//					difficulty.equals("brutal")) {
+//
+//				while(!validShip) {
+//
+//					// index offset
+//					int index = -1;
+//
+//					// choosing a random ship
+//					c = rand.nextInt(5) + 2;
+//
+//					// adjustment for the Destroyer and Submarine
+//					if(c == 2 || c == 3)
+//						index = c-2;
+//					// adjustment for the Battleship 
+//					else if(c == 4 || c == 5)
+//						index = c-1;
+//					// adjustment for the Cruiser
+//					else if(c == 6) // 6 is second 3 long boat (Cruiser)
+//						index = c-4;
+//					// adjustment for the AI
+//					index += 5;
+//
+//					// if ship still has life, it is valid
+//					if(allShipsStatus[index] > 0) 
+//						validShip = true;
+//
+//				}
+//					
+//			}
+//
+//			// ensuring hit on first turn on challenge difficulty
+//			if(difficulty.equals("challenge") && AIhits + AImisses == 0) {
+//				out:
+//				// searching for player ship
+//				for(int i = 0; i < totalRows; i++)
+//					for(int j = 0; j < totalCols; j++)
+//						if(shipLocs[i][j] >= 2 && AIgrid[i][j] == 0) {
+//							a = i;
+//							b = j;
+//							break out;
+//						}
+//
+//				// FIXME TESTING VERSION ONLY
+//				System.out.println("challenge " + a + "," + b);
+//
+//				// firing shot
+//				shotFired(a, b);
+//			}
+//			// ensuring hit on first turn and after every 5 misses on brutal difficulty
+//			else if(difficulty.equals("brutal") && AImisses % 5 == 0 && AImisses / 5 == brutalHits && smartShooting == false) {
+//				out:
+//				// searching for player ship
+//				for(int i = 0; i < totalRows; i++)
+//					for(int j = 0; j < totalCols; j++)
+//						if(shipLocs[i][j] >= 2 && AIgrid[i][j] == 0) {
+//							a = i;
+//							b = j;
+//							break out;
+//						}
+//
+//				// FIXME TESTING VERSION ONLY
+//				System.out.println("brutal " + a + "," + b);
+//
+//				// firing shot
+//				shotFired(a, b);
+//				
+//			}
+//			// firing with smartshooting
+//			else if(smartShooting) {
+//				int r = rand.nextInt(4);
+//				while(smartShots[r].equals("XX"))
+//					r = rand.nextInt(4);
+//				shotFired(Integer.parseInt(smartShots[r].substring(0,1)),
+//						Integer.parseInt(smartShots[r].substring(1,2)));
+//
+//				// FIXME TESTING VERSION ONLY 
+//				System.out.println("AI coordinates: " + smartShots[r]);
+//			}
+//			// default firing at random
+//			else {
+//				// generating random coordinates
+//				int r1 = rand.nextInt(8);
+//				int r2 = rand.nextInt(8);
+//
+//				// FIXME TESTING VERSION ONLY
+//				System.out.println("AI coordinates: (" + r1 + "," + r2 + ")");
+//
+//				// firing shot
+//				shotFired(r1, r2);
+//			}
+//
+//			// displaying all grids
+//			displayPlayerShips();
+//			displayAIShips();
+//			displayPlayerGrid();
+//			displayAIGrid();
+//
+//		}
+//		// game is over
+//		getWinner();
+//	}
 
 
 	/**
@@ -729,94 +810,93 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 	 *
 	 *
 	 */
-	public void AIonly() {
-
-		while(AIhits != 10) {
-			// AI taking shot	
-			Random rand = new Random();
-			currentPlayer = 2;
-
-			int a = 0;
-			int b = 0;
-			// ensuring hit on first turn on challenge difficulty
-			if(difficulty.equals("challenge") && AIhits + AImisses == 0) {
-				out:
-				// searching for player ship
-				for(int i = 0; i < totalRows; i++)
-					for(int j = 0; j < totalCols; j++)
-						if(shipLocs[i][j] >= 2 && AIgrid[i][j] == 0) {
-							a = i;
-							b = j;
-							break out;
-						}
-
-				// FIXME TESTING VERSION ONLY
-				System.out.println("challenge " + a + "," + b);
-
-				// firing shot
-				shotFired(a, b);
-			}
-			// ensuring hit on first turn and after every 5 misses on brutal difficulty
-			else if(difficulty.equals("brutal") && AImisses % 5 == 0 && AImisses / 5 == brutalHits && smartShooting == false) {
-				out:
-				// searching for player ship
-				for(int i = 0; i < totalRows; i++)
-					for(int j = 0; j < totalCols; j++)
-						if(shipLocs[i][j] >= 2 && AIgrid[i][j] == 0) {
-							a = i;
-							b = j;
-							break out;
-						}
-
-				// FIXME TESTING VERSION ONLY
-				System.out.println("brutal " + a + "," + b);
-
-				// firing shot
-				brutalHits++;
-				shotFired(a, b);
-
-				// FIXME TESTING VERSION ONLY
-				System.out.println("bhits " + brutalHits);
-				
-			}
-			// firing with smartshooting
-			else if(smartShooting) {
-				int r = rand.nextInt(4);
-				while(smartShots[r].equals("XX"))
-					r = rand.nextInt(4);
-				shotFired(Integer.parseInt(smartShots[r].substring(0,1)),
-						Integer.parseInt(smartShots[r].substring(1,2)));
-
-				// FIXME TESTING VERSION ONLY 
-				System.out.println("AI coordinates: " + smartShots[r]);
-			}
-			// default firing at random
-			else {
-				// generating random coordinates
-				int r1 = rand.nextInt(8);
-				int r2 = rand.nextInt(8);
-
-				// FIXME TESTING VERSION ONLY
-				System.out.println("AI coordinates: (" + r1 + "," + r2 + ")");
-
-				// firing shot
-				shotFired(r1, r2);
-			}
-
-			// displaying grids
-			displayPlayerShips();
-			//displayAIShips();
-			//displayPlayerGrid();
-			displayAIGrid();
-		}
-
-	}
+	public void AIonly() {}
+//
+//		while(AIhits != 10) {
+//			// AI taking shot	
+//			Random rand = new Random();
+//			currentPlayer = 2;
+//
+//			int a = 0;
+//			int b = 0;
+//			// ensuring hit on first turn on challenge difficulty
+//			if(difficulty.equals("challenge") && AIhits + AImisses == 0) {
+//				out:
+//				// searching for player ship
+//				for(int i = 0; i < totalRows; i++)
+//					for(int j = 0; j < totalCols; j++)
+//						if(shipLocs[i][j] >= 2 && AIgrid[i][j] == 0) {
+//							a = i;
+//							b = j;
+//							break out;
+//						}
+//
+//				// FIXME TESTING VERSION ONLY
+//				System.out.println("challenge " + a + "," + b);
+//
+//				// firing shot
+//				shotFired(a, b);
+//			}
+//			// ensuring hit on first turn and after every 5 misses on brutal difficulty
+//			else if(difficulty.equals("brutal") && AImisses % 5 == 0 && AImisses / 5 == brutalHits && smartShooting == false) {
+//				out:
+//				// searching for player ship
+//				for(int i = 0; i < totalRows; i++)
+//					for(int j = 0; j < totalCols; j++)
+//						if(shipLocs[i][j] >= 2 && AIgrid[i][j] == 0) {
+//							a = i;
+//							b = j;
+//							break out;
+//						}
+//
+//				// FIXME TESTING VERSION ONLY
+//				System.out.println("brutal " + a + "," + b);
+//
+//				// firing shot
+//				brutalHits++;
+//				shotFired(a, b);
+//
+//				// FIXME TESTING VERSION ONLY
+//				System.out.println("bhits " + brutalHits);
+//				
+//			}
+//			// firing with smartshooting
+//			else if(smartShooting) {
+//				int r = rand.nextInt(4);
+//				while(smartShots[r].equals("XX"))
+//					r = rand.nextInt(4);
+//				shotFired(Integer.parseInt(smartShots[r].substring(0,1)),
+//						Integer.parseInt(smartShots[r].substring(1,2)));
+//
+//				// FIXME TESTING VERSION ONLY 
+//				System.out.println("AI coordinates: " + smartShots[r]);
+//			}
+//			// default firing at random
+//			else {
+//				// generating random coordinates
+//				int r1 = rand.nextInt(8);
+//				int r2 = rand.nextInt(8);
+//
+//				// FIXME TESTING VERSION ONLY
+//				System.out.println("AI coordinates: (" + r1 + "," + r2 + ")");
+//
+//				// firing shot
+//				shotFired(r1, r2);
+//			}
+//
+//			// displaying grids
+//			displayPlayerShips();
+//			//displayAIShips();
+//			//displayPlayerGrid();
+//			displayAIGrid();
+//		}
+//
+//	}
 	
-	/**
-	 *
-	 *
-	 *
-	 */
+	
+	/****************************************************************************
+	 * Allows the player to place their ships 
+	 ****************************************************************************/
 	public void placePlayerShips() {
 
 		int playerShipsPlaced = 0;
@@ -829,8 +909,8 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 		String lettersUpper = "ABCDEFGH";
 		String numbers = "01234567";
 
-		// FIXME JOPTION FOR GUI
-		System.out.println("The grid is 8x8. The letters range from A-H and numbers from 0-7.");
+		JOptionPane.showMessageDialog(null, "The grid is 8x8. The letters for the columns range from A-H " + 
+				"and numbers for the rows range from 0-7.");
 		
 		// until all ships are placed
 		while(playerShipsPlaced < 5) {
@@ -867,11 +947,11 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 				if(gridLoc.length() == 2 && validLetter(gridLoc.substring(0, 1)) == true && validNumber(Integer.parseInt(gridLoc.substring(1, 2))))
 					validInput = true;
 				else {
-					System.out.println("Invalid input. Please try again.\n");
+					JOptionPane.showMessageDialog(null, "Invalid input. Please try again.");
 				}
 			}
 
-			// FIXME may need to print this out to test it - FIXME toUpperCase() need to be implemented above
+			// FIXME toUpperCase() need to be implemented above
 			String gridCol = gridLoc.substring(1, 2);
 			gridLoc = gridLoc.substring(0, 1).toUpperCase() + gridCol;
 		
@@ -958,11 +1038,9 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 				canPlace = 0;
 			}
 			
-			// FIXME GIVE AN OPTION TO CANCEL PLACEMENT??
-
 			// cannot place ship
 			if(canPlace == 0) {
-				System.out.println("You can not place a ship in any direction from this point.");
+				JOptionPane.showMessageDialog(null, "You cannot place a ship in any direction from this point.");
 			}
 			// can place in all four directions
 			else if(canPlace == 4) {
@@ -1098,12 +1176,10 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 		displayPlayerShips();
 	}
 
-	/**
-	 *
-	 *
-	 *
-	 *
-	 */
+	
+	/****************************************************************************
+	 * Used specifically to demo the project in class
+	 ****************************************************************************/
 	public void presentationDemo() {
 
 		// placing player Carrier
@@ -1130,11 +1206,13 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 		displayPlayerShips();
 	}
 
-	/**
+	
+	/****************************************************************************
+	 * Checks to see if the player's letter input for row is valid
 	 *
-	 *
-	 *
-	 */
+	 * @param letter - the letter the player input for row
+	 * @return true if valid, false otherwise
+	 ****************************************************************************/
 	public boolean validLetter(String letter) { 
 		String validLetters = "ABCDEFGH";
 		for(int i = 0; i < validLetters.length(); i++)
@@ -1143,11 +1221,13 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 		return false;
 	}
 
-	/**
+	
+	/****************************************************************************
+	 * Checks to see if the player's number input for column is valid
 	 *
-	 *
-	 *
-	 */
+	 * @param number - the number the player input for column
+	 * @return true if valid, false otherwise
+	 ****************************************************************************/
 	public boolean validNumber(int number) {
 		for(int i = 0; i < 8; i++)
 			if(number == i)
@@ -1155,11 +1235,14 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 		return false;
 	}
 
-	/**
+	
+	/****************************************************************************
+	 * Converts valid player letter input into the correct number value
+	 * Number value needed to access the 2D array properly
 	 *
-	 *
-	 *
-	 */
+	 * @param letter - the number the player input for row
+	 * @return the corresponding number value for letter entered
+	 ****************************************************************************/
 	public int convertLetterInput(String letter) {
 		switch (letter) {
 			case "A": 
@@ -1180,15 +1263,20 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 				return 7;
 		}
 		
-		System.out.println("should not reach here");
+		JOptionPane.showMessageDialog(null, "Error 9");
 		return -1;
 	}
 
-	/**
+	
+	/****************************************************************************
+	 * Places a player's ship once it has checked for valid location
+	 * Called from placePlayerShips()
 	 *
-	 *
-	 *
-	 */
+	 * @param a - the row coordinate of the ship's starting point
+	 * @param b - the column coordinate of the ship's starting point
+	 * @param dir - the direction the rest of the ship will go 
+	 * @param shipLength - the length of the ship being placed
+	 ****************************************************************************/
 	public void placeShip(int a, int b, String dir, int shipLength) {
 		// cruiser has a value of 6
 		if(placeCruiser)
@@ -1243,11 +1331,10 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 			placeCruiser = true;
 	}
 
-	/**
-	 *
-	 *
-	 *
-	 */
+	
+	/****************************************************************************
+	 * Places the AI's ships at random
+	 ****************************************************************************/
 	public void placeAIShips() {
 
 		int AIshipsPlaced = 0;
@@ -1400,17 +1487,18 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 			}
 		}
 		
-		System.out.println("The AI's ships have been placed!");
+		JOptionPane.showMessageDialog(null, "The AI's ships have been placed!");
 
 		// displaying AI ship placement
 		displayAIShips();
 	}
 
-	/**
-	 *
-	 *
-	 *
-	 */
+	
+	/****************************************************************************
+	 * Displays the 2D integer array that shows the player's ship locations
+	 * 2 = Destroyer, 3 = Submarine, 4 = Battleship, 5 = Carrier, 6 = Cruiser
+	 * 0 = open water
+	 ****************************************************************************/
 	public void displayPlayerShips() {
 		System.out.println("Displaying the Player's Ship Placement:");
 		for(int row = 0; row < totalRows; row++) {
@@ -1423,11 +1511,12 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 		}
 	}
 
-	/**
-	 *
-	 *
-	 *
-	 */
+	
+	/****************************************************************************
+	 * Displays the 2D integer array that shows the AI's ship locations
+	 * 2 = Destroyer, 3 = Submarine, 4 = Battleship, 5 = Carrier, 6 = Cruiser
+	 * 0 = open water
+	 ****************************************************************************/
 	public void displayAIShips() {
 		System.out.println("Displaying AI's Ship Placement:");
 		for(int row = 0; row < totalRows; row++) {
@@ -1440,11 +1529,11 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 		}
 	}
 
-	/**
-	 *
-	 *
-	 *
-	 */
+	
+	/****************************************************************************
+	 * Displays the 2D integer array that shows the player's shots taken
+	 * 0 = open water, 1 = miss, 2 = hit
+	 ****************************************************************************/
 	public void displayPlayerGrid() {
 		System.out.println("Displaying the Player's Grid:");
 		for(int row = 0; row < totalRows; row++) {
@@ -1457,11 +1546,11 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 		}
 	}
 
-	/**
-	 *
-	 *
-	 *
-	 */
+	
+	/****************************************************************************
+	 * Displays the 2D integer array that shows the AI's shots taken
+	 * 0 = open water, 1 = miss, 2 = hit
+	 ****************************************************************************/
 	public void displayAIGrid() {
 		System.out.println("Displaying the AI's Grid:");
 		for(int row = 0; row < totalRows; row++) {
@@ -1475,26 +1564,24 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 	}
 
 
-
-	/**
+	/****************************************************************************
 	 * Getter method for rows on the grid
 	 *
 	 * @return number of rows on the grid
-	 */
+	 ****************************************************************************/
 	public int getRows() {
 		return totalRows;
 	}
 
 
-	/**
+	/****************************************************************************
 	 * Getter method for columns on the grid
 	 *
 	 * @return number of columns on the grid
-	 */
+	 ****************************************************************************/
 	public int getCols() {
 		return totalCols;
 	}
-
 
 
 }
