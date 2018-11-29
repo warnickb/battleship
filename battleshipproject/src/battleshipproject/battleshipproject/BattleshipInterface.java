@@ -1,4 +1,4 @@
-package battleshipproject;
+//package battleshipproject;
 
 /********************************************************************************
  * Battleship Game Logic Interface
@@ -8,6 +8,13 @@ package battleshipproject;
  ********************************************************************************/
 
 public interface BattleshipInterface {
+
+	/**
+	 *
+	 *
+	 */
+	public boolean checkFire(int row_pos, int col_pos);
+
 
 	/****************************************************************************
 	 * Determines if location of fire is valid

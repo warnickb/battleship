@@ -1,4 +1,4 @@
-package battleshipproject;
+//package battleshipproject;
 
 import javax.swing.*;
 import java.util.*;
@@ -59,7 +59,7 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 	/* determines AI level */
 	private String difficulty;
 
-	//FIXME FIXME FIXME WILL NEED TO MOVE THESE TO WORK WITH RESET
+	//FIXME FIXME FIXME WILL NEED TO MOVE THESE TO WORK WITH RESET - or have a reset special arrays method
 	/* used to help AI sink a ship after it lands a hit */
 	private String[] smartShots = {"XX", "XX", "XX", "XX"};
 
@@ -122,6 +122,32 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 
 	}
 
+	
+	/**
+	 *
+	 *
+	 *
+	 *
+	 */
+	public boolean checkFire(int row_pos, int col_pos) {
+
+		if(currentPlayer == 1)
+			if(grid[row_pos][col_pos] != 0) {
+				JOptionPane.showMessageDialog(null, "You have already fired to this location!");
+				return false;
+			} else {
+				return true;
+			}
+		if(currentPlayer == 2)
+			if(AIgrid[row_pos][col_pos] != 0)
+				return false;
+			else
+				return true;
+		System.out.println("Should not reach here.");
+		return false;
+
+	}
+
 
 	/****************************************************************************
 	 * Determines if location of fire is valid
@@ -170,7 +196,7 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 						currentPlayer = 1;
 					else 
 						currentPlayer++;
-					return true;
+					return false;
 				} 
 				// hit shot
 				else if(AIshipLocs[row_pos][col_pos] >= 2) {
@@ -229,7 +255,7 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 						currentPlayer = 1;
 					else 
 						currentPlayer++;
-					return true;
+					return false;
 				} 
 				// hit shot
 				else if(shipLocs[row_pos][col_pos] >= 2) {
@@ -590,7 +616,12 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 	 ****************************************************************************/
 	public void reset() {
 
-		difficulty = "brutal";	//FIXME NEED PARAMETER FOR DIFFICULTY or implement in constructor
+		Object[] possibleDiffs = {"normal", "challenge", "brutal"};
+	   	Object selectedDiff = JOptionPane.showInputDialog(null, "Choose Difficulty", "Difficulty Selection", 
+			JOptionPane.INFORMATION_MESSAGE, null, possibleDiffs, possibleDiffs[0]);	
+		difficulty = selectedDiff.toString();
+
+		//difficulty = "brutal";
 		currentPlayer = 1;
 		playerHits = 0;
 		AIhits = 0;
@@ -939,7 +970,7 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 			// ensures valid user input
 			boolean validInput = false;
 
-			// while loop used to check for valid input
+			// while loop used to check for valid input  - FIXME NEED THE GUI VERSION OF ACCEPTING INPUT FIXME FIXME FIXME FIXME 
 			Scanner scanner = new Scanner(System.in);
 			while(validInput == false) {
 				//System.out.println("Enter the starting point of your ship (Ex: E5): ");
