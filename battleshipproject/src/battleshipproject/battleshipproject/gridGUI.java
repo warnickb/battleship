@@ -1,5 +1,6 @@
 package battleshipproject;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -7,33 +8,80 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 //import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import org.omg.CORBA_2_3.portable.InputStream;
+
 public class gridGUI extends JFrame {
 	JButton enemyBoardButton = new JButton();
 	JButton playerBoardButton = new JButton();
-	BattleshipGame game = new BattleshipGame();
+	JButton carrier = new JButton();
+	JButton battleship = new JButton();
+	JButton cruiser = new JButton();
+	JButton submarine = new JButton();
+	JButton destroyer = new JButton();
+	
+	JPanel enemyBoard = new JPanel();
+	JPanel playerBoard = new JPanel();
+	JPanel statsSection = new JPanel();
+	JPanel ships = new JPanel();
+	
+	//BattleshipGame game = new BattleshipGame();
 	Color water = new Color(150,250,250);
 	Color hit = new Color(250,175,175);
 	Color sunk = new Color(175, 75, 75);
 	
+	//ImageIcon carrierPic = new ImageIcon("carrier.PNG");
+	//java.io.InputStream input = ClassLoader.getSystemResourceAsStream("carrier.png");
+	
 	
 	public gridGUI() {
 		gridSetup();
-		game.reset();
-		new shipGUI();
+		//game.reset();
+		//new shipGUI();
 	}
 	
 	
 	private void gridSetup() {
 		//create GUI and set Layout
+		
+		
 		Container pane = getContentPane();
-		pane.setLayout(new GridLayout(17,8));
+		pane.setLayout(new BorderLayout());
+		enemyBoard.setLayout(new GridLayout(8,8));
+		playerBoard.setLayout(new GridLayout(8,8));
+		statsSection.setLayout(new GridLayout(1,8));
+		ships.setLayout(new GridLayout(1,5));
+		
+		carrier = new JButton("carrier.png");
+	    carrier.addActionListener(null);
+	    ships.add(carrier);
+	    
+	    
+	    battleship = new JButton("Battleship");
+	    battleship.addActionListener(null);
+	    ships.add(battleship);
+	    
+	    cruiser = new JButton("Cruiser");
+	    cruiser.addActionListener(null);
+	    ships.add(cruiser);
+	    
+	    submarine = new JButton("Submarine");
+	    submarine.addActionListener(null);
+	    ships.add(submarine);
+	    
+	    destroyer = new JButton("Destroyer");
+	    destroyer.addActionListener(null);
+	    ships.add(destroyer);
+
+	    pane.add(ships, BorderLayout.LINE_END);
 		//Create Enemy Grid
 		for (int i = 0; i < 8; i++) { 
 			for (int j = 0; j < 8; j++) {
@@ -48,7 +96,8 @@ public class gridGUI extends JFrame {
 					
 				}
 			});
-			pane.add(enemyBoardButton);
+			enemyBoard.add(enemyBoardButton);
+			pane.add(enemyBoard, BorderLayout.NORTH);
 			
 			}
 		}
@@ -70,14 +119,14 @@ public class gridGUI extends JFrame {
 	    enemyMisses.setText("Enemy Misses: ");
 	    space.setText("   ");
 	    misses.setText("Misses: ");
-	    pane.add(score);
-	    pane.add(turnNum);
-	    pane.add(hits);
-	    pane.add(misses);
-	    pane.add(enemyScore);
-	    pane.add(enemyHits);
-	    pane.add(enemyMisses);
-	    pane.add(space);
+	    statsSection.add(score);
+	    statsSection.add(turnNum);
+	    statsSection.add(hits);
+	    statsSection.add(misses);
+	    statsSection.add(enemyScore);
+	    statsSection.add(enemyHits);
+	    statsSection.add(enemyMisses);
+	    statsSection.add(space);
 	    score.setEditable(false);
 	    turnNum.setEditable(false);
 	    hits.setEditable(false);
@@ -86,6 +135,7 @@ public class gridGUI extends JFrame {
 	    enemyHits.setEditable(false);
 	    enemyMisses.setEditable(false);
 	    space.setEditable(false);
+	    pane.add(statsSection, BorderLayout.WEST);
 	    
 	    //Create Player Grid
 	    for (int a = 0; a < 8; a++) {
@@ -101,14 +151,19 @@ public class gridGUI extends JFrame {
 					//game.placeShip(a, b, "Left", 3);
 				}
 			});
-			pane.add(playerBoardButton);
+			playerBoard.add(playerBoardButton);
+			pane.add(playerBoard, BorderLayout.SOUTH);
 			
 			}
 		}
 	    
+	    
+	    
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    pack();
 	    setVisible(true);
+	    
+	    
 	}
 	
 //	private void buttonClick() {

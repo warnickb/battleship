@@ -10,13 +10,13 @@ import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class charGUI extends JFrame{
+public class difficultyGUI extends JFrame{
 	JPanel contentPane;
 	private JButton btnNewButton;
 	private JButton btnNewButton2;
 	private JButton btnNewButton3;
 	
-	public charGUI() {
+	public difficultyGUI() {
 		menu();
 		buttonClick();
 	}
@@ -29,21 +29,21 @@ public class charGUI extends JFrame{
 		setContentPane(contentPane);
 		contentPane.setLayout(new GridLayout(0, 3, 0, 0));
 		
-		btnNewButton = new JButton("Character 1");
+		btnNewButton = new JButton("Easy");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
 		contentPane.add(btnNewButton);
 		
-		btnNewButton2 = new JButton("Character 2");
+		btnNewButton2 = new JButton("Medium");
 		btnNewButton2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
 		contentPane.add(btnNewButton2);
 		
-		btnNewButton3 = new JButton("Character 3");
+		btnNewButton3 = new JButton("Hard");
 		btnNewButton3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
