@@ -27,7 +27,7 @@ public class shipGUI extends JFrame {
 				btn1.setAlignmentX(Component.CENTER_ALIGNMENT);
 				getContentPane().add(btn1);
 				
-				JButton btn2 = new JButton("Battleship");
+				JButton btn2 = new JButton("Battleship!");
 				btn2.setAlignmentX(Component.CENTER_ALIGNMENT);
 				getContentPane().add(btn2);
 				
