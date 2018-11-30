@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -42,18 +43,20 @@ public class gridGUI extends JFrame {
 	JPanel statsSection = new JPanel();
 	JPanel ships = new JPanel();
 	
+	JTextField score = new JTextField();
+    JTextField turnNum = new JTextField();
+    JTextField hits = new JTextField();
+    JTextField misses = new JTextField();
+    JTextField enemyScore = new JTextField();
+    JTextField enemyHits = new JTextField();
+    JTextField enemyMisses = new JTextField();
+    JTextField space = new JTextField();
+	
 	Color water;
 	Color hit;
 	Color sunk;
 	MyButtonHandler myHandler;
 
-
-//	public static void main(String args[]) {
-//		
-//		gridGUI gui = new gridGUI();
-//		gui.setVisible(true);
-//
-//	}  - coming from another gui class
 	
 	
 	public gridGUI() {
@@ -115,23 +118,18 @@ public class gridGUI extends JFrame {
 
 		
 	    //Add scoring area between grids
-	    JTextField score = new JTextField();
-	    JTextField turnNum = new JTextField();
-	    JTextField hits = new JTextField();
-	    JTextField misses = new JTextField();
-	    JTextField enemyScore = new JTextField();
-	    JTextField enemyHits = new JTextField();
-	    JTextField enemyMisses = new JTextField();
-	    JTextField space = new JTextField();
+	    
 	    // FIXME need to use instance variables to get the values in text fields
-	    score.setText("Score: ");
-	    turnNum.setText("Turn Number: ");
-	    hits.setText("Hits: ");
-	    enemyScore.setText("Enemy Score: ");
-	    enemyHits.setText("Enemy Hits: ");
-	    enemyMisses.setText("Enemy Misses: ");
+		// FIXME decide how to calculate score (use multipliers, hits, misses etc)
+		// - or use accuracy
+	    score.setText("Score: 0");
+	    turnNum.setText("Turn Number: 0");
+	    hits.setText("Hits: 0");
+	    enemyScore.setText("Enemy Score: 0");
+	    enemyHits.setText("Enemy Hits: 0");
+	    enemyMisses.setText("Enemy Misses: 0");
 	    space.setText("   ");
-	    misses.setText("Misses: ");
+	    misses.setText("Misses: 0");
 	    statsSection.add(score);
 	    statsSection.add(turnNum);
 	    statsSection.add(hits);
@@ -140,7 +138,7 @@ public class gridGUI extends JFrame {
 	    statsSection.add(enemyHits);
 	    statsSection.add(enemyMisses);
 	    statsSection.add(space);
-	    // FIXME these may cause issues updating text fields
+	    // FIXME these may cause issues updating text fields - shouldn't
 	    score.setEditable(false);
 	    turnNum.setEditable(false);
 	    hits.setEditable(false);
@@ -187,10 +185,14 @@ public class gridGUI extends JFrame {
 				for(int c = 0; c < game.getCols(); c++) {
 					if(enemyBoardButton[r][c] == which) {
 						if(game.checkFire(r, c)) {
-							if(game.shotFired(r, c)) 
+							if(game.shotFired(r, c)) {
 								enemyBoardButton[r][c].setBackground(hit);
-							else 
+								hits.setText("Hits: " + game.playerHits);
+							}
+							else {
 								enemyBoardButton[r][c].setBackground(Color.WHITE);
+								misses.setText("Misses: " + game.playerMisses);
+							}
 							enemyBoardButton[r][c].setEnabled(false);
 						} else {
 							System.out.println("already fired here");
@@ -199,6 +201,11 @@ public class gridGUI extends JFrame {
 				}
 			}
 
+			DecimalFormat df = new DecimalFormat("0.0");
+			float accuracy = ((float)game.playerHits/((float)game.playerHits+(float)game.playerMisses))* 100;
+			System.out.println("acc " + accuracy);
+			score.setText("Accuracy: " + df.format(accuracy) + "%");
+			
 			int r = 0; 
 			int c = 0;
 			int x = 0;
@@ -241,10 +248,14 @@ public class gridGUI extends JFrame {
 							break out;
 						}
 				if(game.checkFire(r, c)) {
-					if(game.shotFired(r, c))
+					if(game.shotFired(r, c)) {
 						playerBoardButton[r][c].setBackground(hit);
-					else
+						enemyHits.setText("Enemy Hits: " + game.AIhits);
+					}
+					else {
 						playerBoardButton[r][c].setBackground(Color.WHITE);
+						enemyMisses.setText("Enemy Misses: " + game.AImisses);
+					}
 				}
 
 			}
@@ -268,15 +279,19 @@ public class gridGUI extends JFrame {
 						canFire = true;
 				}
 				if(canFire) {
-					if(game.shotFired(r, c))
+					if(game.shotFired(r, c)) {
 						playerBoardButton[r][c].setBackground(hit);
-					else
+						enemyHits.setText("Enemy Hits: " + game.AIhits);
+					}
+					else {
 						playerBoardButton[r][c].setBackground(Color.WHITE);
+						enemyMisses.setText("Enemy Misses: " + game.AImisses);
+					}
+					game.brutalHits++;
 				}
 				else 
 					System.out.println("major error");
 				//System.out.println("brutal hits " + game.brutalHits);
-				game.brutalHits++;
 
 			}
 			
@@ -299,17 +314,20 @@ public class gridGUI extends JFrame {
 					else
 						game.smartShots[ran] = "XX";
 				}
-				System.out.println("ran3 " + ran);
-				System.out.println(game.smartShots[ran]);
+	
 				if(canFire) {
 					int row = Integer.parseInt(game.smartShots[ran].substring(0, 1));
 					int col = Integer.parseInt(game.smartShots[ran].substring(1, 2));
 					System.out.println("ughv2 " + row + col);
 					//System.out.println("ugh " + Integer.parseInt(game.smartShots[ran].substring(0,1)) + Integer.parseInt(game.smartShots[ran].substring(1,2)));
-					if(game.shotFired(row, col))
+					if(game.shotFired(row, col)) { 
 						playerBoardButton[row][col].setBackground(hit);
-					else
+						enemyHits.setText("Enemy Hits: " + game.AIhits);
+					}
+					else {
 						playerBoardButton[row][col].setBackground(Color.WHITE);
+						enemyMisses.setText("Enemy Misses: " + game.AImisses);
+					}
 				}
 				else
 					System.out.println("major error 2");
@@ -326,10 +344,14 @@ public class gridGUI extends JFrame {
 						canFire = true;
 				}
 				if(canFire) {
-					if(game.shotFired(r1, r2))
+					if(game.shotFired(r1, r2)) {
 						playerBoardButton[r1][r2].setBackground(hit);
-					else
+						enemyHits.setText("Enemy Hits: " + game.AIhits);
+					}
+					else {
 						playerBoardButton[r1][r2].setBackground(Color.WHITE);
+						enemyMisses.setText("Enemy Misses: " + game.AImisses);
+					}
 				}
 				else 
 					System.out.println("major error 3");
@@ -337,6 +359,8 @@ public class gridGUI extends JFrame {
 			}
 
 			System.out.println("brutal hits " + game.brutalHits);
+			
+			turnNum.setText("Turn Number: " + (game.playerHits+game.playerMisses+1));
 
 			// helpful for debugging
 			game.displayPlayerShips();
@@ -355,21 +379,3 @@ public class gridGUI extends JFrame {
 
 }
 
-
-
-	
-	//private void buttonClick() {
-//		enemyBoardButton.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				System.out.println("test");
-//			}
-//			});
-//		enemyBoardButton.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				System.out.println("test");
-//			}
-//			});
-//	}
-	
-	
-//}
