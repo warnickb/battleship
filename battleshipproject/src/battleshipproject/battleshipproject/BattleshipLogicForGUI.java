@@ -8,7 +8,7 @@ import java.awt.*;
  * BattleshipGame Logic Class For Use With GUI
  *
  * @author Justin Perticone
- * @version November 26, 2018
+ * @version November 29, 2018
  **************************************************************************************/
 
 public class BattleshipLogicForGUI implements BattleshipInterface {
@@ -16,61 +16,61 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 	/* instance variables */
 
 	/* 1 = player, 2 = AI */
-	private int currentPlayer;
+	int currentPlayer;
 
 	/* keeps track of player's shots */
-	private int[][] grid;
+	int[][] grid;
 
 	/* keeps track of AI's shots */
-	private int[][] AIgrid;
+	int[][] AIgrid;
 
 	/* keeps track of player's ships */
-	private int[][] shipLocs;
+	int[][] shipLocs;
 
 	/* keeps track of AI's ships */
-	private int[][] AIshipLocs;
+	int[][] AIshipLocs;
 
 	/* grid is 8 x 8 */
-	private int totalRows;
-	private int totalCols;
-	private int gridSize;
+	int totalRows;
+	int totalCols;
+	int gridSize;
 
 	/* count hits and misses */
-	private int playerHits;
-	private int AIhits;
-	private int playerMisses;
-	private int AImisses;
+	int playerHits;
+	int AIhits;
+	int playerMisses;
+	int AImisses;
 
 	/* used to differentiate the two 3 long ships */
-	private boolean placeCruiser;
+	boolean placeCruiser;
 
 	/* variables used for AI "smartshooting" */
-	private boolean smartShooting;
-	private boolean shipHit;
-	private int smartHits;
-	private int initialHitRow;
-	private int initialHitCol;
-	private int initialShipHit;
-	private int brutalHits;
-	private String rememberOtherHit;
-	private String rememberOtherHit2;
-	private String rememberOtherHit3;
+	boolean smartShooting;
+	boolean shipHit;
+	int smartHits;
+	int initialHitRow;
+	int initialHitCol;
+	int initialShipHit;
+	int brutalHits;
+	String rememberOtherHit;
+	String rememberOtherHit2;
+	String rememberOtherHit3;
 
 	/* determines AI level */
-	private String difficulty;
+	String difficulty;
 
 	//FIXME FIXME FIXME WILL NEED TO MOVE THESE TO WORK WITH RESET - or have a reset special arrays method
 	/* used to help AI sink a ship after it lands a hit */
-	private String[] smartShots = {"XX", "XX", "XX", "XX"};
+	String[] smartShots = {"XX", "XX", "XX", "XX"};
 
 	/* keeps track of the life of each ship of both the player and AI */
-	private int[] allShipsStatus = new int[]{2, 3, 3, 4, 5, 2, 3, 3, 4, 5};
+	int[] allShipsStatus = new int[]{2, 3, 3, 4, 5, 2, 3, 3, 4, 5};
 
 	/* array with all the names of the ships */ 
-	private String[] allShipNames = new String[]{"Destroyer", "Submarine", "Cruiser", "Battleship", "Carrier"};
+	String[] allShipNames = new String[]{"Destroyer", "Submarine", "Cruiser", "Battleship", "Carrier"};
 
 	/* array of ships hit aside from the first ship while AI is trying to sink a ship */ 
-	private int[] shipsRemembered = new int[]{0, 0, 0, 0};
+	int[] shipsRemembered = new int[]{0, 0, 0, 0};
 	
 
 	/***************************************************************************
@@ -82,26 +82,6 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 		totalRows = 8;
 		totalCols = 8;
 		gridSize = 64;
-		//difficulty = "brutal";
-
-		// move these to reset FIXME
-		//difficulty = "brutal";	//FIXME NEED PARAMETER FOR DIFFICULTY
-		//currentPlayer = 1;
-		//playerHits = 0;
-		//AIhits = 0;
-		//playerMisses = 0;
-		//AImisses = 0;
-		//smartShooting = false;
-		//shipHit = false;
-		//smartHits = 0;
-		//initialHitRow = -2;
-		//initialHitCol = -2;
-		//initialShipHit = -2;
-		//brutalHits = 0;
-		//placeCruiser = false;
-		//rememberOtherHit = "";
-		//rememberOtherHit2 = "";
-		//rememberOtherHit3 = "";
 
 		reset();		
 
@@ -621,7 +601,6 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 			JOptionPane.INFORMATION_MESSAGE, null, possibleDiffs, possibleDiffs[0]);	
 		difficulty = selectedDiff.toString();
 
-		//difficulty = "brutal";
 		currentPlayer = 1;
 		playerHits = 0;
 		AIhits = 0;
@@ -970,16 +949,14 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 			// ensures valid user input
 			boolean validInput = false;
 
-			// while loop used to check for valid input  - FIXME NEED THE GUI VERSION OF ACCEPTING INPUT FIXME FIXME FIXME FIXME 
-			Scanner scanner = new Scanner(System.in);
+			// while loop used to check for valid input  
 			while(validInput == false) {
-				//System.out.println("Enter the starting point of your ship (Ex: E5): ");
-				gridLoc = scanner.next();
+				gridLoc = JOptionPane.showInputDialog(null, "Enter the coordinates for your ship: ");
 				if(gridLoc.length() == 2 && validLetter(gridLoc.substring(0, 1)) == true && validNumber(Integer.parseInt(gridLoc.substring(1, 2))))
 					validInput = true;
-				else {
+				else
 					JOptionPane.showMessageDialog(null, "Invalid input. Please try again.");
-				}
+
 			}
 
 			// FIXME toUpperCase() need to be implemented above
