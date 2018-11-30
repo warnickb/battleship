@@ -1,6 +1,7 @@
 package battleshipproject;
 
 import javax.swing.*;
+
 import java.util.*;
 import java.awt.*;
 
@@ -172,10 +173,11 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 					System.out.println("CP : " + currentPlayer);
 
 					// update currentPlayer
-					if(currentPlayer == 2)
-						currentPlayer = 1;
-					else 
-						currentPlayer++;
+					currentPlayer = 2;
+					//if(currentPlayer == 2)
+						//currentPlayer = 1;
+					//else 
+						//currentPlayer++;
 					return false;
 				} 
 				// hit shot
@@ -198,11 +200,12 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 					if(shipSunk.length() > 1) 
 						JOptionPane.showMessageDialog(null, "The enemies " + shipSunk + " has been sunk!!");
 
+					currentPlayer = 2;
 					// update currentPlayer
-					if(currentPlayer == 2)
-						currentPlayer = 1;
-					else
-						currentPlayer++;
+					//if(currentPlayer == 2)
+						//currentPlayer = 1;
+					//else
+						//currentPlayer++;
 					return true;
 				}
 				else {
@@ -228,13 +231,14 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 
 					// FIXME TESTING VERSION ONLY
 					System.out.println("AI Miss : " + AImisses);
+					System.out.println("loc " + row_pos + " " + col_pos);
 					System.out.println("CP : " + currentPlayer);
 
 					// update currentPlayer
-					if(currentPlayer == 2)
-						currentPlayer = 1;
-					else 
-						currentPlayer++;
+					//if(currentPlayer == 2)
+					currentPlayer = 1;
+					//else 
+						//currentPlayer++;
 					return false;
 				} 
 				// hit shot
@@ -244,6 +248,7 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 
 					// FIXME TESTING VERSION ONLY
 					System.out.println("AI Hit: " + AIhits);
+					System.out.println("loc " + row_pos + " " + col_pos);
 					System.out.println("CP : " + currentPlayer);
 
 					// 2 on AIgrid indicates a hit
@@ -398,10 +403,10 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 					}
 				
 					// update currentPlayer
-					if(currentPlayer == 2)
-						currentPlayer = 1;
-					else
-						currentPlayer++;
+					//if(currentPlayer == 2)
+					currentPlayer = 1;
+					//else
+						//currentPlayer++;
 					return true;
 				}
 				else {
@@ -658,8 +663,8 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 		
 		// player will now place their ships
 		JOptionPane.showMessageDialog(null, "Time to place your ships!");
-		placePlayerShips();
-		//presentationDemo();
+		//placePlayerShips();
+		presentationDemo();
 
 		// AI ships will now be placed at random
 		JOptionPane.showMessageDialog(null, "The AI's ships will now be placed at random...");

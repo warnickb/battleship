@@ -14,7 +14,6 @@ import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-
 import javax.swing.*;
 import java.util.*;
 
@@ -59,9 +58,9 @@ public class gridGUI extends JFrame {
 	
 	public gridGUI() {
 		game = new BattleshipLogicForGUI();
-		water = new Color(150,250,250);
+		water = new Color(200,235,250);
 		hit = new Color(250,175,175);
-		sunk = new Color(175, 75, 75);
+		sunk = new Color(175,75,75);
 		myHandler = new MyButtonHandler();
 		gridSetup();
 		//game.reset();
@@ -165,6 +164,7 @@ public class gridGUI extends JFrame {
 			    playerBoardButton[row][col].setBackground(water);
 			    playerBoard.add(playerBoardButton[row][col]);
 			    pane.add(playerBoard, BorderLayout.SOUTH);
+			    playerBoardButton[row][col].setEnabled(false);
 		    }
 	    }
 
@@ -180,44 +180,24 @@ public class gridGUI extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 
 			Object which = e.getSource();
-			int player = game.currentPlayer();
+			//int player = game.currentPlayer();
 			Random rand = new Random();
 			
 			for(int r = 0; r < game.getRows(); r++) {
 				for(int c = 0; c < game.getCols(); c++) {
 					if(enemyBoardButton[r][c] == which) {
 						if(game.checkFire(r, c)) {
-							if(game.shotFired(r, c)) {
-								if(player == 1) {
-									enemyBoardButton[r][c].setBackground(hit);
-								}
-								else if(player == 2) {
-									playerBoardButton[r][c].setBackground(hit);
-								}
-								else {
-									System.out.println("error");
-								}
-							} else {
-								if(player == 1) {
-									enemyBoardButton[r][c].setBackground(Color.WHITE);
-								}
-								else if(player == 2) {
-									playerBoardButton[r][c].setBackground(Color.WHITE);
-								}
-								else {
-									System.out.println("error 2");
-								}
-							}
+							if(game.shotFired(r, c)) 
+								enemyBoardButton[r][c].setBackground(hit);
+							else 
+								enemyBoardButton[r][c].setBackground(Color.WHITE);
+							enemyBoardButton[r][c].setEnabled(false);
 						} else {
 							System.out.println("already fired here");
 						}
 					}
 				}
 			}
-			
-			//FIXME enemy will fire without clicking a button 
-			//will have to have it fire right away - refer to playGame()
-
 
 			int r = 0; 
 			int c = 0;
@@ -247,8 +227,10 @@ public class gridGUI extends JFrame {
 
 				}
 			}
-
+		
 			if(game.difficulty.equals("challenge") && game.AIhits + game.AImisses == 0) {
+				System.out.println("x " + x);
+
 				out:
 
 				for(int i = 0; i < game.totalRows; i++)
@@ -269,6 +251,8 @@ public class gridGUI extends JFrame {
 
 			else if(game.difficulty.equals("brutal") && game.AImisses % 5 == 0 && 
 					game.AImisses / 5 == game.brutalHits && game.smartShooting == false) {
+				System.out.println("x " + x);
+
 				boolean canFire = false;
 				while(!canFire) {
 					out:
@@ -291,24 +275,41 @@ public class gridGUI extends JFrame {
 				}
 				else 
 					System.out.println("major error");
+				//System.out.println("brutal hits " + game.brutalHits);
+				game.brutalHits++;
 
 			}
-
+			
 			else if(game.smartShooting == true) {
+				System.out.println("is this being executed???");
 				boolean canFire = false;
 				int ran = rand.nextInt(4);
+				System.out.println("ran1 " + ran);
+				System.out.println(game.smartShots[ran]);
+				
 				while(!canFire) {
-					while(game.smartShots[r].equals("XX"))
+					while(game.smartShots[ran].equals("XX")) {
 						ran = rand.nextInt(4);
+						System.out.println("ran " + ran);
+						System.out.println(game.smartShots[ran]);
+					}
 					if(game.checkFire(Integer.parseInt(game.smartShots[ran].substring(0,1)), 
 								Integer.parseInt(game.smartShots[ran].substring(1,2))))
 						canFire = true;
-				}
-				if(canFire) {
-					if(game.shotFired(Integer.parseInt(game.smartShots[ran].substring(0,1)), Integer.parseInt(game.smartShots[ran].substring(1,2))))
-						playerBoardButton[Integer.parseInt(game.smartShots[ran].substring(0,1))][Integer.parseInt(game.smartShots[ran].substring(1,2))].setBackground(hit);
 					else
-						playerBoardButton[Integer.parseInt(game.smartShots[ran].substring(0,1))][Integer.parseInt(game.smartShots[ran].substring(1,2))].setBackground(Color.WHITE);
+						game.smartShots[ran] = "XX";
+				}
+				System.out.println("ran3 " + ran);
+				System.out.println(game.smartShots[ran]);
+				if(canFire) {
+					int row = Integer.parseInt(game.smartShots[ran].substring(0, 1));
+					int col = Integer.parseInt(game.smartShots[ran].substring(1, 2));
+					System.out.println("ughv2 " + row + col);
+					//System.out.println("ugh " + Integer.parseInt(game.smartShots[ran].substring(0,1)) + Integer.parseInt(game.smartShots[ran].substring(1,2)));
+					if(game.shotFired(row, col))
+						playerBoardButton[row][col].setBackground(hit);
+					else
+						playerBoardButton[row][col].setBackground(Color.WHITE);
 				}
 				else
 					System.out.println("major error 2");
@@ -335,6 +336,7 @@ public class gridGUI extends JFrame {
 
 			}
 
+			System.out.println("brutal hits " + game.brutalHits);
 
 			// helpful for debugging
 			game.displayPlayerShips();
