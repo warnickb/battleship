@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 
 import javax.swing.JButton;
@@ -15,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.util.*;
 
@@ -57,6 +59,7 @@ public class gridGUI extends JFrame {
 	Color sunk;
 	MyButtonHandler myHandler;
 
+	//ImageIcon carrierPic = new ImageIcon(getClass().getResource("images/carrier.png"));
 	
 	
 	public gridGUI() {
@@ -82,7 +85,7 @@ public class gridGUI extends JFrame {
 		statsSection.setLayout(new GridLayout(1,8));
 		ships.setLayout(new GridLayout(1,5));
 		
-		carrier = new JButton("carrier.png");
+		//carrier = new JButton(carrierPic);
 	    carrier.addActionListener(null);
 	    ships.add(carrier);
 	    
@@ -368,12 +371,42 @@ public class gridGUI extends JFrame {
 			game.displayPlayerGrid();
 			game.displayAIGrid();
 
-			if(game.playerHits == 17)
+			if(game.playerHits == 17) {
 				JOptionPane.showMessageDialog(null, "You have won the game!!");
-			else if(game.AIhits == 17)
+				int reply = JOptionPane.showConfirmDialog(null, "Play Again?", null, JOptionPane.YES_NO_OPTION);
+				if (reply == JOptionPane.YES_OPTION) {
+					setVisible(false);
+					new gridGUI();
+					
+				}
+				else {
+					System.exit(0);
+				}
+			}
+			else if(game.AIhits == 17) {
 				JOptionPane.showMessageDialog(null, "The enemy has won the game!!");
-
+				int reply = JOptionPane.showConfirmDialog(null, "Play Again?", null, JOptionPane.YES_NO_OPTION);
+				if (reply == JOptionPane.YES_OPTION) {
+					setVisible(false);
+					new gridGUI();
+				}
+				else {
+					System.exit(0);
+				}
+			}
 		}
+	}
+	
+	//display player ships on the player board 
+	public void displayPlayerShips() {
+		
+	    for(int row = 0; row < game.getRows(); row++) {
+		    for(int col = 0; col < game.getCols(); col++) {
+		    	//if( ) {
+		    		
+		    	//}
+		    }
+	    }
 	}
 
 

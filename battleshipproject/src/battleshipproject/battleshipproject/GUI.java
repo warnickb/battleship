@@ -41,7 +41,7 @@ public class GUI extends JFrame {
 		btnNewGame = new JButton("New Game");
 		contentPane.add(btnNewGame);
 		
-		JButton btnSettings = new JButton("Settings");
+		JButton btnSettings = new JButton("Leaderboard");
 		contentPane.add(btnSettings);
 		
 		JButton btnExit = new JButton("Exit");
