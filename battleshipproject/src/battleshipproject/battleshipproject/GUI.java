@@ -41,7 +41,7 @@ public class GUI extends JFrame {
 		btnNewGame = new JButton("New Game");
 		contentPane.add(btnNewGame);
 		
-		JButton btnSettings = new JButton("Leaderboard");
+		JButton btnSettings = new JButton("Leaderboards");
 		contentPane.add(btnSettings);
 		
 		JButton btnExit = new JButton("Exit");
@@ -54,7 +54,8 @@ public class GUI extends JFrame {
 		btnNewGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//JFrame charGUI = new JFrame();
-				new difficultyGUI();
+				//new difficultyGUI();
+				new gridGUI();
 				setVisible(false);
 			}
 			});

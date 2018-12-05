@@ -4,10 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 
 import javax.swing.JButton;
@@ -16,12 +18,9 @@ import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.util.*;
 
-//CHECKLIST
-//add sunk updates
 
 /**********************************************************************
  * Primary GUI for Battleship Project
@@ -31,128 +30,221 @@ import java.util.*;
  * @version November 29, 2018
  **********************************************************************/
 public class gridGUI extends JFrame {
+	
 	JButton[][] enemyBoardButton;
 	JButton[][] playerBoardButton;
 	BattleshipLogicForGUI game;
-	JButton carrier = new JButton();
-	JButton battleship = new JButton();
-	JButton cruiser = new JButton();
-	JButton submarine = new JButton();
-	JButton destroyer = new JButton();
 	
-	JPanel enemyBoard = new JPanel();
-	JPanel playerBoard = new JPanel();
-	JPanel statsSection = new JPanel();
-	JPanel ships = new JPanel();
+	JButton score = new JButton();
+	JButton turnNum = new JButton();
+	JButton hits = new JButton();
+	JButton misses = new JButton();
+	JButton enemyScore = new JButton();
+	JButton enemyHits = new JButton();
+	JButton enemyMisses = new JButton();
+	JButton hitStreak = new JButton("Hit Streak: 0");
+	JButton bestHitStreak = new JButton("Top Hit Streak: 0");
+	JButton timer = new JButton("Time: 00:00.000");
+	JButton enemyHitStreak = new JButton("Enemy Hit Streak: 0");
+	JButton enemyBestHitStreak = new JButton("Enemy Top Hit Streak: 0");
 	
-	JTextField score = new JTextField();
-    JTextField turnNum = new JTextField();
-    JTextField hits = new JTextField();
-    JTextField misses = new JTextField();
-    JTextField enemyScore = new JTextField();
-    JTextField enemyHits = new JTextField();
-    JTextField enemyMisses = new JTextField();
-    JTextField space = new JTextField();
+	JButton playerSunk;
+	JButton sunkDes;
+	JButton sunkSub;
+	JButton sunkCru;
+	JButton sunkBat;
+	JButton sunkCar;
+	JButton enemySunk;
+	JButton enemySunkDes;
+	JButton enemySunkSub;
+	JButton enemySunkCru;
+	JButton enemySunkBat;
+	JButton enemySunkCar;
 	
 	Color water;
 	Color hit;
 	Color sunk;
+	Color ship;
+	Color checkmark;
+	Color yellow;
+	Color orange;
+	
+	GridLayout myLayout;
 	MyButtonHandler myHandler;
+	JPanel pane;
+	JFrame frame;
+	JMenuBar menuBar;
+	JMenu file;
+	JMenu stats;
+	JMenuItem saveItem;
+	JMenuItem loadItem;
+	JMenuItem newItem;
+	JMenuItem quitItem;
+	JMenuItem currStatsItem;
+	JMenuItem leaderboardsItem;
+	
+	ImageIcon winnerIcon;
+	ImageIcon loserIcon;
+	ImageIcon statsIcon;
+	
+	long startTime;
+	long elapsedTime;
+	long elapsedSeconds;
+	long secondsDisplay;
+	long elapsedMinutes;
+	long minutesDisplay;
 
-	//ImageIcon carrierPic = new ImageIcon(getClass().getResource("images/carrier.png"));
-	
-	
+		
 	public gridGUI() {
 		game = new BattleshipLogicForGUI();
 		water = new Color(200,235,250);
 		hit = new Color(250,175,175);
-		sunk = new Color(175,75,75);
+		sunk = new Color(220,120,120);
+		ship = new Color(200,200,200);
+		checkmark = new Color(225,250,180);
+		yellow = new Color(250,250,180);
+		orange = new Color(250,235,180);
+		winnerIcon = new ImageIcon(gridGUI.class.getResource("fireworks.jpg"));
+		loserIcon = new ImageIcon(gridGUI.class.getResource("sinking.jpg"));
+		statsIcon = new ImageIcon(gridGUI.class.getResource("stats.jpg"));
+		startTime = System.currentTimeMillis();
 		myHandler = new MyButtonHandler();
+
 		gridSetup();
-		//game.reset();
-		//new shipGUI();
 	}
 	
 	
 	public void gridSetup() {
+		
 		//create GUI and set Layout
 		
+		frame = new JFrame();
+		pane = new JPanel();
+		myLayout = new GridLayout(19, 10);
+		pane.setLayout(myLayout);
+		menuBar = new JMenuBar();
+		file = new JMenu("File");
+		saveItem = new JMenuItem("Save Game");
+		loadItem = new JMenuItem("Load Game");
+		newItem = new JMenuItem("New Game");
+		newItem.addActionListener(myHandler);
+		quitItem = new JMenuItem("Exit");
+		quitItem.addActionListener(myHandler);
+		file.add(saveItem);
+		file.add(loadItem);
+		file.add(newItem);
+		file.add(quitItem);
+		stats = new JMenu("Stats");
+		currStatsItem = new JMenuItem("Game Statistics");
+		currStatsItem.addActionListener(myHandler);
+		// FIXME make leaderboards into a panel or something other than message dialog
+		leaderboardsItem = new JMenuItem("Leaderboards");
+		leaderboardsItem.addActionListener(myHandler);
+		stats.add(currStatsItem);
+		menuBar.add(file);
+		menuBar.add(stats);
+		frame.setJMenuBar(menuBar);
 		
-		Container pane = getContentPane();
-		pane.setLayout(new BorderLayout());
-		enemyBoard.setLayout(new GridLayout(8,8));
-		playerBoard.setLayout(new GridLayout(8,8));
-		statsSection.setLayout(new GridLayout(1,8));
-		ships.setLayout(new GridLayout(1,5));
+		playerSunk = new JButton("Player Checklist:");
+		sunkDes = new JButton("Destroyer");
+		sunkSub = new JButton("Submarine");
+		sunkCru = new JButton("Cruiser");
+		sunkBat = new JButton("Battleship");
+		sunkCar = new JButton("Carrier");
+		enemySunk = new JButton("Enemy Checklist:");
+		enemySunkDes = new JButton("Destroyer");
+		enemySunkSub = new JButton("Submarine");
+		enemySunkCru = new JButton("Cruiser");
+		enemySunkBat = new JButton("Battleship");
+		enemySunkCar = new JButton("Carrier");
 		
-		//carrier = new JButton(carrierPic);
-	    carrier.addActionListener(null);
-	    ships.add(carrier);
+		playerSunk.setBackground(yellow);
+		enemySunk.setBackground(yellow);
+		score.setBackground(yellow);
+		bestHitStreak.setBackground(yellow);
+		enemyScore.setBackground(yellow);
+		enemyBestHitStreak.setBackground(yellow);
+		
+
+		playerSunk.setEnabled(false);
+	    sunkDes.setEnabled(false);
+	    sunkSub.setEnabled(false);
+	    sunkCru.setEnabled(false);
+	    sunkBat.setEnabled(false);
+	    sunkCar.setEnabled(false);
+	    enemySunk.setEnabled(false);
+	    enemySunkDes.setEnabled(false);
+	    enemySunkSub.setEnabled(false);
+	    enemySunkCru.setEnabled(false);
+	    enemySunkBat.setEnabled(false);
+	    enemySunkCar.setEnabled(false);
+	    hitStreak.setEnabled(false);
+	    bestHitStreak.setEnabled(false);
+	    timer.setEnabled(false);
+	    enemyHitStreak.setEnabled(false);
+	    enemyBestHitStreak.setEnabled(false);
+		
 	    
-	    
-	    battleship = new JButton("Battleship");
-	    battleship.addActionListener(null);
-	    ships.add(battleship);
-	    
-	    cruiser = new JButton("Cruiser");
-	    cruiser.addActionListener(null);
-	    ships.add(cruiser);
-	    
-	    submarine = new JButton("Submarine");
-	    submarine.addActionListener(null);
-	    ships.add(submarine);
-	    
-	    destroyer = new JButton("Destroyer");
-	    destroyer.addActionListener(null);
-	    ships.add(destroyer);
-	    
-	    pane.add(ships, BorderLayout.LINE_END);
+	    Dimension dim = new Dimension(80, 80);
 	    
 		enemyBoardButton = new JButton[game.getRows()][game.getCols()];
 		for(int row = 0; row < game.getRows(); row++) {
-		    	for(int col = 0; col < game.getCols(); col++) {
-				enemyBoardButton[row][col] = new JButton(" ");
-			    	enemyBoardButton[row][col].addActionListener(myHandler);
-			    	enemyBoardButton[row][col].setBackground(water);
-			    	enemyBoard.add(enemyBoardButton[row][col]);
-			    	pane.add(enemyBoard, BorderLayout.NORTH);
-		    	}
-	    	}
+		    for(int col = 0; col < game.getCols(); col++) {    	
+		    	enemyBoardButton[row][col] = new JButton(" ");
+			   	enemyBoardButton[row][col].addActionListener(myHandler);
+			   	enemyBoardButton[row][col].setBackground(water);
+			   	enemyBoardButton[row][col].setPreferredSize(dim);
+			   	pane.add(enemyBoardButton[row][col]);
+		   	}
+	    }
 
 		
-	    //Add scoring area between grids
-	    
-	    // FIXME need to use instance variables to get the values in text fields
-		// FIXME decide how to calculate score (use multipliers, hits, misses etc)
-		// - or use accuracy
-	    score.setText("Score: 0");
+		score.setText("Accuracy: ");
 	    turnNum.setText("Turn Number: 0");
 	    hits.setText("Hits: 0");
-	    enemyScore.setText("Enemy Score: 0");
+	    enemyScore.setText("Enemy Accuracy: ");
 	    enemyHits.setText("Enemy Hits: 0");
 	    enemyMisses.setText("Enemy Misses: 0");
-	    space.setText("   ");
 	    misses.setText("Misses: 0");
-	    statsSection.add(score);
-	    statsSection.add(turnNum);
-	    statsSection.add(hits);
-	    statsSection.add(misses);
-	    statsSection.add(enemyScore);
-	    statsSection.add(enemyHits);
-	    statsSection.add(enemyMisses);
-	    statsSection.add(space);
-	    // FIXME these may cause issues updating text fields - shouldn't
-	    score.setEditable(false);
-	    turnNum.setEditable(false);
-	    hits.setEditable(false);
-	    misses.setEditable(false);
-	    enemyScore.setEditable(false);
-	    enemyHits.setEditable(false);
-	    enemyMisses.setEditable(false);
-	    space.setEditable(false);
+		
+		pane.add(playerSunk);
+	    pane.add(sunkDes);
+	    pane.add(sunkSub);
+	    pane.add(sunkCru);
+	    pane.add(sunkBat);
+	    pane.add(sunkCar);
+	    pane.add(score);
+	    pane.add(bestHitStreak);
+		
+
+	    pane.add(hits);
+	    pane.add(misses);
+	    pane.add(enemyHits);
+	    pane.add(enemyMisses);
+	    pane.add(hitStreak);
+	    pane.add(enemyHitStreak);
+	    pane.add(turnNum);
+	    pane.add(timer); 
+	   
 	    
-	    pane.add(statsSection, BorderLayout.WEST);
+	    score.setEnabled(false);
+	    hits.setEnabled(false);
+	    misses.setEnabled(false);
+	    enemyScore.setEnabled(false);
+	    enemyHits.setEnabled(false);
+	    enemyMisses.setEnabled(false);
+	    turnNum.setEnabled(false);
 	    
+	    pane.add(enemySunk);
+	    pane.add(enemySunkDes);
+	    pane.add(enemySunkSub);
+	    pane.add(enemySunkCru);
+	    pane.add(enemySunkBat);
+	    pane.add(enemySunkCar);
+	    pane.add(enemyScore);
+	    pane.add(enemyBestHitStreak);
+	    
+
 	    
 	    //Create Player Grid
 	   
@@ -163,16 +255,31 @@ public class gridGUI extends JFrame {
 			    playerBoardButton[row][col] = new JButton(" ");
 			    playerBoardButton[row][col].addActionListener(myHandler);
 			    playerBoardButton[row][col].setBackground(water);
-			    playerBoard.add(playerBoardButton[row][col]);
-			    pane.add(playerBoard, BorderLayout.SOUTH);
+			    playerBoardButton[row][col].setPreferredSize(dim);
+			    pane.add(playerBoardButton[row][col]);
 			    playerBoardButton[row][col].setEnabled(false);
 		    }
 	    }
-
 	    
-	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    pack();
-	    setVisible(true);
+	    
+	    for(int row = 0; row < game.getRows(); row++) {
+	    	for(int col = 0; col < game.getCols(); col++) {
+	    		if(game.shipLocs[row][col] >= 2) {
+	    			playerBoardButton[row][col].setBackground(ship);
+	    			playerBoardButton[row][col].setText(String.valueOf(game.shipLocs[row][col]));
+	    		}
+	    	}
+	    }
+	    
+	    frame.getContentPane().add(pane);
+	    frame.setTitle("Classic Battleship: " + game.difficulty + " Difficulty");
+	    frame.setLocationRelativeTo(null);
+	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    frame.pack();
+	    frame.setVisible(true);
+	    //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    //pack();
+	    //setVisible(true);
 	}
 
 
@@ -181,8 +288,45 @@ public class gridGUI extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 
 			Object which = e.getSource();
-			//int player = game.currentPlayer();
 			Random rand = new Random();
+			
+			String gameStatistics = hits.getText() + "\n";
+			//gameStatistics += misses.getText() + "\n";
+			gameStatistics += enemyHits.getText() + "\n";
+			//gameStatistics += enemyMisses.getText() + "\n";
+			gameStatistics += bestHitStreak.getText() + "\n";
+			gameStatistics += enemyHitStreak.getText() + "\n";
+			gameStatistics += score.getText() + "\n";
+			gameStatistics += enemyScore.getText() + "\n";
+			gameStatistics += turnNum.getText() + "\n";
+			gameStatistics += timer.getText();
+			
+			elapsedTime = System.currentTimeMillis() - startTime;
+			
+			if(which == currStatsItem) {
+				JOptionPane.showMessageDialog(null, gameStatistics, "Current Game Stats",
+						JOptionPane.INFORMATION_MESSAGE, statsIcon);
+			}
+			else if(which == quitItem ) {
+				System.exit(1);
+			}
+			else if(which == newItem) {
+				int confirmation = JOptionPane.showConfirmDialog(null, "End this game to " +
+						"begin a new game?", null, JOptionPane.YES_NO_OPTION);
+				if(confirmation == JOptionPane.YES_OPTION) { 
+					frame.dispose();
+					new GUI();
+				}
+			}
+			// FIXME WILL NEW new GUI() in loadItem
+			else if(which == saveItem) {
+				
+			}
+			else if(which == loadItem) {
+				
+			}
+			
+			else {
 			
 			for(int r = 0; r < game.getRows(); r++) {
 				for(int c = 0; c < game.getCols(); c++) {
@@ -194,8 +338,10 @@ public class gridGUI extends JFrame {
 							}
 							else {
 								enemyBoardButton[r][c].setBackground(Color.WHITE);
-								misses.setText("Misses: " + game.playerMisses);
+								misses.setText("Misses: " + game.playerMisses);	
 							}
+							hitStreak.setText("Hit Streak: " + game.hitStreak);
+							bestHitStreak.setText("Top Hit Streak: " + game.bestStreak);
 							enemyBoardButton[r][c].setEnabled(false);
 						} else {
 							System.out.println("already fired here");
@@ -214,31 +360,34 @@ public class gridGUI extends JFrame {
 			int x = 0;
 			boolean validShip = false;
 
-			if((game.difficulty.equals("challenge") && game.AIhits + game.AImisses == 0) ||
-					game.difficulty.equals("brutal")) {
+			if((game.difficulty.equals("Challenge") && game.AIhits + game.AImisses == 0) ||
+					game.difficulty.equals("Brutal")) {
 
 				while(!validShip) {
 
 					int index = -1;
 
 					x = rand.nextInt(5) + 2;
+					System.out.println("x " + x);
 
-					if(c == 2 || c == 3)
-						index = c-2;
-					else if(c == 4 || c == 5)
-						index = c-1;
-					else if(c == 6)
-						index = c-4;
+					if(x == 2 || x == 3)
+						index = x-2;
+					else if(x == 4 || x == 5)
+						index = x-1;
+					else if(x == 6)
+						index = x-4;
 					
 					index += 5;
 
 					if(game.allShipsStatus[index] > 0) 
 						validShip = true;
+					
+					System.out.println("index " + index);
 
 				}
 			}
 		
-			if(game.difficulty.equals("challenge") && game.AIhits + game.AImisses == 0) {
+			if(game.difficulty.equals("Challenge") && game.AIhits + game.AImisses == 0) {
 				System.out.println("x " + x);
 
 				out:
@@ -259,11 +408,13 @@ public class gridGUI extends JFrame {
 						playerBoardButton[r][c].setBackground(Color.WHITE);
 						enemyMisses.setText("Enemy Misses: " + game.AImisses);
 					}
+					enemyHitStreak.setText("Enemy Hit Streak: " + game.AIhitStreak);
+					enemyBestHitStreak.setText("Enemy Top Hit Streak: " + game.AIbestStreak);
 				}
 
 			}
 
-			else if(game.difficulty.equals("brutal") && game.AImisses % 5 == 0 && 
+			else if(game.difficulty.equals("Brutal") && game.AImisses % 5 == 0 && 
 					game.AImisses / 5 == game.brutalHits && game.smartShooting == false) {
 				System.out.println("x " + x);
 
@@ -278,6 +429,7 @@ public class gridGUI extends JFrame {
 								c = j;
 								break out;
 							}
+					System.out.println("r " + r + " c " + c);
 					if(game.checkFire(r, c))
 						canFire = true;
 				}
@@ -285,21 +437,21 @@ public class gridGUI extends JFrame {
 					if(game.shotFired(r, c)) {
 						playerBoardButton[r][c].setBackground(hit);
 						enemyHits.setText("Enemy Hits: " + game.AIhits);
+						game.brutalHits++;
 					}
 					else {
 						playerBoardButton[r][c].setBackground(Color.WHITE);
 						enemyMisses.setText("Enemy Misses: " + game.AImisses);
 					}
-					game.brutalHits++;
+					enemyHitStreak.setText("Enemy Hit Streak: " + game.AIhitStreak);
+					enemyBestHitStreak.setText("Enemy Top Hit Streak: " + game.AIbestStreak);
 				}
 				else 
 					System.out.println("major error");
-				//System.out.println("brutal hits " + game.brutalHits);
 
 			}
 			
 			else if(game.smartShooting == true) {
-				System.out.println("is this being executed???");
 				boolean canFire = false;
 				int ran = rand.nextInt(4);
 				System.out.println("ran1 " + ran);
@@ -321,8 +473,7 @@ public class gridGUI extends JFrame {
 				if(canFire) {
 					int row = Integer.parseInt(game.smartShots[ran].substring(0, 1));
 					int col = Integer.parseInt(game.smartShots[ran].substring(1, 2));
-					System.out.println("ughv2 " + row + col);
-					//System.out.println("ugh " + Integer.parseInt(game.smartShots[ran].substring(0,1)) + Integer.parseInt(game.smartShots[ran].substring(1,2)));
+
 					if(game.shotFired(row, col)) { 
 						playerBoardButton[row][col].setBackground(hit);
 						enemyHits.setText("Enemy Hits: " + game.AIhits);
@@ -331,6 +482,8 @@ public class gridGUI extends JFrame {
 						playerBoardButton[row][col].setBackground(Color.WHITE);
 						enemyMisses.setText("Enemy Misses: " + game.AImisses);
 					}
+					enemyHitStreak.setText("Enemy Hit Streak: " + game.AIhitStreak);
+					enemyBestHitStreak.setText("Enemy Top Hit Streak: " + game.AIbestStreak);
 				}
 				else
 					System.out.println("major error 2");
@@ -355,11 +508,17 @@ public class gridGUI extends JFrame {
 						playerBoardButton[r1][r2].setBackground(Color.WHITE);
 						enemyMisses.setText("Enemy Misses: " + game.AImisses);
 					}
+					enemyHitStreak.setText("Enemy Hit Streak: " + game.AIhitStreak);
+					enemyBestHitStreak.setText("Enemy Top Hit Streak: " + game.AIbestStreak);
 				}
 				else 
 					System.out.println("major error 3");
 
 			}
+			
+			float enemyAccuracy = ((float)game.AIhits/((float)game.AIhits+(float)game.AImisses))* 100;
+			System.out.println("acc " + accuracy);
+			enemyScore.setText("Enemy Accuracy: " + df.format(enemyAccuracy) + "%");
 
 			System.out.println("brutal hits " + game.brutalHits);
 			
@@ -370,43 +529,115 @@ public class gridGUI extends JFrame {
 			game.displayAIShips();
 			game.displayPlayerGrid();
 			game.displayAIGrid();
+			
+			int sunkShip = 0;
+			for(int z = 0; z < game.allShipsStatus.length; z++) {
+				if(game.allShipsStatus[z] == -1) {
+					if(z <= 4) {
+						sunkShip = shipVal(z);
+						for(int row = 0; row < game.getRows(); row++) {
+							for(int col = 0; col < game.getCols(); col++) {
+								if(game.AIshipLocs[row][col] == sunkShip) {
+									enemyBoardButton[row][col].setBackground(sunk);
+									enemyBoardButton[row][col].setText(String.valueOf(game.AIshipLocs[row][col]));
+									if(sunkShip == 2)
+										sunkDes.setBackground(checkmark);
+									else if(sunkShip == 3)
+										sunkSub.setBackground(checkmark);
+									else if(sunkShip == 6)
+										sunkCru.setBackground(checkmark);
+									else if(sunkShip == 4)
+										sunkBat.setBackground(checkmark);
+									else if(sunkShip == 5)
+										sunkCar.setBackground(checkmark);
+								}
+							}
+						}
+					}
+					else if(z > 4) {
+						sunkShip = shipVal(z);
+						for(int row = 0; row < game.getRows(); row++) {
+							for(int col = 0; col < game.getCols(); col++) {
+								if(game.shipLocs[row][col] == sunkShip) {
+									playerBoardButton[row][col].setBackground(sunk);
+									if(sunkShip == 2)
+										enemySunkDes.setBackground(checkmark);
+									else if(sunkShip == 3)
+										enemySunkSub.setBackground(checkmark);
+									else if(sunkShip == 6)
+										enemySunkCru.setBackground(checkmark);
+									else if(sunkShip == 4)
+										enemySunkBat.setBackground(checkmark);
+									else if(sunkShip == 5)
+										enemySunkCar.setBackground(checkmark);
+								}
+							}
+						}
+					}
+					game.allShipsStatus[z] = -2;
+				}
+			}
+			
+			
 
+			// FIXME WOULD HAVE TO UPDATE LEADERBOARDS IN HERE
 			if(game.playerHits == 17) {
-				JOptionPane.showMessageDialog(null, "You have won the game!!");
-				int reply = JOptionPane.showConfirmDialog(null, "Play Again?", null, JOptionPane.YES_NO_OPTION);
-				if (reply == JOptionPane.YES_OPTION) {
-					setVisible(false);
-					new gridGUI();
-					
-				}
-				else {
-					System.exit(0);
-				}
+				JOptionPane.showMessageDialog(null, "", "Game Over! You have won the game!!",
+						JOptionPane.INFORMATION_MESSAGE, winnerIcon);
+				JOptionPane.showMessageDialog(null, gameStatistics, "Game Stats",
+						JOptionPane.INFORMATION_MESSAGE, statsIcon);
+				sunkDes.setBackground(orange);
+				sunkSub.setBackground(orange);
+				sunkCru.setBackground(orange);
+				sunkBat.setBackground(orange);
+				sunkCar.setBackground(orange);
 			}
 			else if(game.AIhits == 17) {
-				JOptionPane.showMessageDialog(null, "The enemy has won the game!!");
-				int reply = JOptionPane.showConfirmDialog(null, "Play Again?", null, JOptionPane.YES_NO_OPTION);
-				if (reply == JOptionPane.YES_OPTION) {
-					setVisible(false);
-					new gridGUI();
-				}
-				else {
-					System.exit(0);
-				}
+				JOptionPane.showMessageDialog(null, "", "Game Over! The enemy has won the game!!",
+						JOptionPane.INFORMATION_MESSAGE, loserIcon);
+				JOptionPane.showMessageDialog(null, gameStatistics, "Game Stats",
+						JOptionPane.INFORMATION_MESSAGE, statsIcon);
+				enemySunkDes.setBackground(orange);
+				enemySunkSub.setBackground(orange);
+				enemySunkCru.setBackground(orange);
+				enemySunkBat.setBackground(orange);
+				enemySunkCar.setBackground(orange);
 			}
+			
+			
+			
+			elapsedSeconds = elapsedTime / 1000;
+			secondsDisplay = elapsedSeconds % 60;
+			elapsedMinutes = elapsedSeconds / 60;
+			minutesDisplay = elapsedMinutes % 60;
+			if(minutesDisplay < 10)
+				timer.setText("Time: 0" + minutesDisplay + ":" + secondsDisplay + "." + elapsedTime % 1000);
+			else
+				timer.setText("Time: " + minutesDisplay + ":" + secondsDisplay + "." + elapsedTime % 1000);
+			
+			
+			}
+			
+
 		}
-	}
-	
-	//display player ships on the player board 
-	public void displayPlayerShips() {
 		
-	    for(int row = 0; row < game.getRows(); row++) {
-		    for(int col = 0; col < game.getCols(); col++) {
-		    	//if( ) {
-		    		
-		    	//}
-		    }
-	    }
+		public int shipVal(int index) {
+			
+			// if there's an error it will change the color of all of the water
+			
+			if(index == 0 || index == 5)
+				return 2;
+			if(index == 1 || index == 6)
+				return 3;
+			if(index == 2 || index == 7)
+				return 6;
+			if(index == 3 || index == 8)
+				return 4;
+			if(index == 4 || index == 9)
+				return 5;
+			
+			return 0;
+		}
 	}
 
 
