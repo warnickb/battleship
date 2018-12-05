@@ -8,6 +8,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
@@ -275,7 +276,10 @@ public class gridGUI extends JFrame {
 	    frame.setTitle("Classic Battleship: " + game.difficulty + " Difficulty");
 	    frame.setLocationRelativeTo(null);
 	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	    frame.pack();
+	    frame.setBounds(0,0, screenSize.width, screenSize.height);
+	    frame.setSize(screenSize.width, screenSize.height);
 	    frame.setVisible(true);
 	    //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    //pack();
@@ -328,292 +332,292 @@ public class gridGUI extends JFrame {
 			
 			else {
 			
-			for(int r = 0; r < game.getRows(); r++) {
-				for(int c = 0; c < game.getCols(); c++) {
-					if(enemyBoardButton[r][c] == which) {
-						if(game.checkFire(r, c)) {
-							if(game.shotFired(r, c)) {
-								enemyBoardButton[r][c].setBackground(hit);
-								hits.setText("Hits: " + game.playerHits);
+				for(int r = 0; r < game.getRows(); r++) {
+					for(int c = 0; c < game.getCols(); c++) {
+						if(enemyBoardButton[r][c] == which) {
+							if(game.checkFire(r, c)) {
+								if(game.shotFired(r, c)) {
+									enemyBoardButton[r][c].setBackground(hit);
+									hits.setText("Hits: " + game.playerHits);
+								}
+								else {
+									enemyBoardButton[r][c].setBackground(Color.WHITE);
+									misses.setText("Misses: " + game.playerMisses);	
+								}
+								hitStreak.setText("Hit Streak: " + game.hitStreak);
+								bestHitStreak.setText("Top Hit Streak: " + game.bestStreak);
+								enemyBoardButton[r][c].setEnabled(false);
+							} else {
+								System.out.println("already fired here");
 							}
-							else {
-								enemyBoardButton[r][c].setBackground(Color.WHITE);
-								misses.setText("Misses: " + game.playerMisses);	
-							}
-							hitStreak.setText("Hit Streak: " + game.hitStreak);
-							bestHitStreak.setText("Top Hit Streak: " + game.bestStreak);
-							enemyBoardButton[r][c].setEnabled(false);
-						} else {
-							System.out.println("already fired here");
 						}
 					}
 				}
-			}
 
-			DecimalFormat df = new DecimalFormat("0.0");
-			float accuracy = ((float)game.playerHits/((float)game.playerHits+(float)game.playerMisses))* 100;
-			System.out.println("acc " + accuracy);
-			score.setText("Accuracy: " + df.format(accuracy) + "%");
+				DecimalFormat df = new DecimalFormat("0.0");
+				float accuracy = ((float)game.playerHits/((float)game.playerHits+(float)game.playerMisses))* 100;
+				System.out.println("acc " + accuracy);
+				score.setText("Accuracy: " + df.format(accuracy) + "%");
 			
-			int r = 0; 
-			int c = 0;
-			int x = 0;
-			boolean validShip = false;
+				int r = 0; 
+				int c = 0;
+				int x = 0;
+				boolean validShip = false;
 
-			if((game.difficulty.equals("Challenge") && game.AIhits + game.AImisses == 0) ||
-					game.difficulty.equals("Brutal")) {
+				if((game.difficulty.equals("Challenge") && game.AIhits + game.AImisses == 0) ||
+						game.difficulty.equals("Brutal")) {
 
-				while(!validShip) {
+					while(!validShip) {
 
-					int index = -1;
+						int index = -1;
 
-					x = rand.nextInt(5) + 2;
+						x = rand.nextInt(5) + 2;
+						System.out.println("x " + x);
+
+						if(x == 2 || x == 3)
+							index = x-2;
+						else if(x == 4 || x == 5)
+							index = x-1;
+						else if(x == 6)
+							index = x-4;
+					
+						index += 5;
+
+						if(game.allShipsStatus[index] > 0) 
+							validShip = true;
+					
+						System.out.println("index " + index);
+
+					}
+				}
+		
+				if(game.difficulty.equals("Challenge") && game.AIhits + game.AImisses == 0) {
 					System.out.println("x " + x);
 
-					if(x == 2 || x == 3)
-						index = x-2;
-					else if(x == 4 || x == 5)
-						index = x-1;
-					else if(x == 6)
-						index = x-4;
-					
-					index += 5;
-
-					if(game.allShipsStatus[index] > 0) 
-						validShip = true;
-					
-					System.out.println("index " + index);
-
-				}
-			}
-		
-			if(game.difficulty.equals("Challenge") && game.AIhits + game.AImisses == 0) {
-				System.out.println("x " + x);
-
-				out:
-
-				for(int i = 0; i < game.totalRows; i++)
-					for(int j = 0; j < game.totalCols; j++)
-						if(game.shipLocs[i][j] == x && game.AIgrid[i][j] == 0) {
-							r = i;
-							c = j;
-							break out;
-						}
-				if(game.checkFire(r, c)) {
-					if(game.shotFired(r, c)) {
-						playerBoardButton[r][c].setBackground(hit);
-						enemyHits.setText("Enemy Hits: " + game.AIhits);
-					}
-					else {
-						playerBoardButton[r][c].setBackground(Color.WHITE);
-						enemyMisses.setText("Enemy Misses: " + game.AImisses);
-					}
-					enemyHitStreak.setText("Enemy Hit Streak: " + game.AIhitStreak);
-					enemyBestHitStreak.setText("Enemy Top Hit Streak: " + game.AIbestStreak);
-				}
-
-			}
-
-			else if(game.difficulty.equals("Brutal") && game.AImisses % 5 == 0 && 
-					game.AImisses / 5 == game.brutalHits && game.smartShooting == false) {
-				System.out.println("x " + x);
-
-				boolean canFire = false;
-				while(!canFire) {
 					out:
 
-					for(int i = 0; i < game.totalRows; i++) 
-						for(int j = 0; j < game.totalCols; j++)
-							if(game.shipLocs[i][j] == x && game.AIgrid[i][j] == 0) {
-								r = i;
-								c = j;
-								break out;
-							}
-					System.out.println("r " + r + " c " + c);
-					if(game.checkFire(r, c))
-						canFire = true;
-				}
-				if(canFire) {
-					if(game.shotFired(r, c)) {
-						playerBoardButton[r][c].setBackground(hit);
-						enemyHits.setText("Enemy Hits: " + game.AIhits);
-						game.brutalHits++;
+						for(int i = 0; i < game.totalRows; i++)
+							for(int j = 0; j < game.totalCols; j++)
+								if(game.shipLocs[i][j] == x && game.AIgrid[i][j] == 0) {
+									r = i;
+									c = j;
+									break out;
+								}
+					if(game.checkFire(r, c)) {
+						if(game.shotFired(r, c)) {
+							playerBoardButton[r][c].setBackground(hit);
+							enemyHits.setText("Enemy Hits: " + game.AIhits);
+						}
+						else {
+							playerBoardButton[r][c].setBackground(Color.WHITE);
+							enemyMisses.setText("Enemy Misses: " + game.AImisses);
+						}
+						enemyHitStreak.setText("Enemy Hit Streak: " + game.AIhitStreak);
+						enemyBestHitStreak.setText("Enemy Top Hit Streak: " + game.AIbestStreak);
 					}
-					else {
-						playerBoardButton[r][c].setBackground(Color.WHITE);
-						enemyMisses.setText("Enemy Misses: " + game.AImisses);
-					}
-					enemyHitStreak.setText("Enemy Hit Streak: " + game.AIhitStreak);
-					enemyBestHitStreak.setText("Enemy Top Hit Streak: " + game.AIbestStreak);
-				}
-				else 
-					System.out.println("major error");
 
-			}
+				}
+
+				else if(game.difficulty.equals("Brutal") && game.AImisses % 5 == 0 && 
+						game.AImisses / 5 == game.brutalHits && game.smartShooting == false) {
+					System.out.println("x " + x);
+
+					boolean canFire = false;
+					while(!canFire) {
+						out:
+
+							for(int i = 0; i < game.totalRows; i++) 
+								for(int j = 0; j < game.totalCols; j++)
+									if(game.shipLocs[i][j] == x && game.AIgrid[i][j] == 0) {
+										r = i;
+										c = j;
+										break out;
+									}
+						System.out.println("r " + r + " c " + c);
+						if(game.checkFire(r, c))
+							canFire = true;
+					}
+					if(canFire) {
+						if(game.shotFired(r, c)) {
+							playerBoardButton[r][c].setBackground(hit);
+							enemyHits.setText("Enemy Hits: " + game.AIhits);
+							game.brutalHits++;
+						}
+						else {
+							playerBoardButton[r][c].setBackground(Color.WHITE);
+							enemyMisses.setText("Enemy Misses: " + game.AImisses);
+						}
+						enemyHitStreak.setText("Enemy Hit Streak: " + game.AIhitStreak);
+						enemyBestHitStreak.setText("Enemy Top Hit Streak: " + game.AIbestStreak);
+					}
+					else 
+						System.out.println("major error");
+
+				}
 			
-			else if(game.smartShooting == true) {
-				boolean canFire = false;
-				int ran = rand.nextInt(4);
-				System.out.println("ran1 " + ran);
-				System.out.println(game.smartShots[ran]);
+				else if(game.smartShooting == true) {
+					boolean canFire = false;
+					int ran = rand.nextInt(4);
+					System.out.println("ran1 " + ran);
+					System.out.println(game.smartShots[ran]);
 				
-				while(!canFire) {
-					while(game.smartShots[ran].equals("XX")) {
-						ran = rand.nextInt(4);
-						System.out.println("ran " + ran);
-						System.out.println(game.smartShots[ran]);
-					}
-					if(game.checkFire(Integer.parseInt(game.smartShots[ran].substring(0,1)), 
+					while(!canFire) {
+						while(game.smartShots[ran].equals("XX")) {
+							ran = rand.nextInt(4);
+							System.out.println("ran " + ran);
+							System.out.println(game.smartShots[ran]);
+						}
+						if(game.checkFire(Integer.parseInt(game.smartShots[ran].substring(0,1)), 
 								Integer.parseInt(game.smartShots[ran].substring(1,2))))
-						canFire = true;
-					else
-						game.smartShots[ran] = "XX";
-				}
+							canFire = true;
+						else
+							game.smartShots[ran] = "XX";
+					}
 	
-				if(canFire) {
-					int row = Integer.parseInt(game.smartShots[ran].substring(0, 1));
-					int col = Integer.parseInt(game.smartShots[ran].substring(1, 2));
+					if(canFire) {
+						int row = Integer.parseInt(game.smartShots[ran].substring(0, 1));
+						int col = Integer.parseInt(game.smartShots[ran].substring(1, 2));
 
-					if(game.shotFired(row, col)) { 
-						playerBoardButton[row][col].setBackground(hit);
-						enemyHits.setText("Enemy Hits: " + game.AIhits);
+						if(game.shotFired(row, col)) { 
+							playerBoardButton[row][col].setBackground(hit);
+							enemyHits.setText("Enemy Hits: " + game.AIhits);
+						}
+						else {
+							playerBoardButton[row][col].setBackground(Color.WHITE);
+							enemyMisses.setText("Enemy Misses: " + game.AImisses);
+						}
+						enemyHitStreak.setText("Enemy Hit Streak: " + game.AIhitStreak);
+						enemyBestHitStreak.setText("Enemy Top Hit Streak: " + game.AIbestStreak);
 					}
-					else {
-						playerBoardButton[row][col].setBackground(Color.WHITE);
-						enemyMisses.setText("Enemy Misses: " + game.AImisses);
-					}
-					enemyHitStreak.setText("Enemy Hit Streak: " + game.AIhitStreak);
-					enemyBestHitStreak.setText("Enemy Top Hit Streak: " + game.AIbestStreak);
+					else
+						System.out.println("major error 2");
 				}
+
+				else {
+					boolean canFire = false;
+					int r1 = -1;
+					int r2 = -1;
+					while(!canFire) {
+						r1 = rand.nextInt(8);
+						r2 = rand.nextInt(8);
+						if(game.checkFire(r1, r2))
+							canFire = true;
+					}
+					if(canFire) {
+						if(game.shotFired(r1, r2)) {
+							playerBoardButton[r1][r2].setBackground(hit);
+							enemyHits.setText("Enemy Hits: " + game.AIhits);
+						}
+						else {
+							playerBoardButton[r1][r2].setBackground(Color.WHITE);
+							enemyMisses.setText("Enemy Misses: " + game.AImisses);
+						}
+						enemyHitStreak.setText("Enemy Hit Streak: " + game.AIhitStreak);
+						enemyBestHitStreak.setText("Enemy Top Hit Streak: " + game.AIbestStreak);
+					}
+					else 
+						System.out.println("major error 3");
+
+				}
+			
+				float enemyAccuracy = ((float)game.AIhits/((float)game.AIhits+(float)game.AImisses))* 100;
+				System.out.println("acc " + accuracy);
+				enemyScore.setText("Enemy Accuracy: " + df.format(enemyAccuracy) + "%");
+
+				System.out.println("brutal hits " + game.brutalHits);
+			
+				turnNum.setText("Turn Number: " + (game.playerHits+game.playerMisses+1));
+
+				// helpful for debugging
+				game.displayPlayerShips();
+				game.displayAIShips();
+				game.displayPlayerGrid();
+				game.displayAIGrid();
+			
+				int sunkShip = 0;
+				for(int z = 0; z < game.allShipsStatus.length; z++) {
+					if(game.allShipsStatus[z] == -1) {
+						if(z <= 4) {
+							sunkShip = shipVal(z);
+							for(int row = 0; row < game.getRows(); row++) {
+								for(int col = 0; col < game.getCols(); col++) {
+									if(game.AIshipLocs[row][col] == sunkShip) {
+										enemyBoardButton[row][col].setBackground(sunk);
+										enemyBoardButton[row][col].setText(String.valueOf(game.AIshipLocs[row][col]));
+										if(sunkShip == 2)
+											sunkDes.setBackground(checkmark);
+										else if(sunkShip == 3)
+											sunkSub.setBackground(checkmark);
+										else if(sunkShip == 6)
+											sunkCru.setBackground(checkmark);
+										else if(sunkShip == 4)
+											sunkBat.setBackground(checkmark);
+										else if(sunkShip == 5)
+											sunkCar.setBackground(checkmark);
+									}
+								}
+							}
+						}
+						else if(z > 4) {
+							sunkShip = shipVal(z);
+							for(int row = 0; row < game.getRows(); row++) {
+								for(int col = 0; col < game.getCols(); col++) {
+									if(game.shipLocs[row][col] == sunkShip) {
+										playerBoardButton[row][col].setBackground(sunk);
+										if(sunkShip == 2)
+											enemySunkDes.setBackground(checkmark);
+										else if(sunkShip == 3)
+											enemySunkSub.setBackground(checkmark);
+										else if(sunkShip == 6)
+											enemySunkCru.setBackground(checkmark);
+										else if(sunkShip == 4)
+											enemySunkBat.setBackground(checkmark);
+										else if(sunkShip == 5)
+											enemySunkCar.setBackground(checkmark);
+									}
+								}
+							}
+						}
+						game.allShipsStatus[z] = -2;
+					}
+				}
+			
+			
+
+				// FIXME WOULD HAVE TO UPDATE LEADERBOARDS IN HERE
+				if(game.playerHits == 17) {
+					JOptionPane.showMessageDialog(null, "", "Game Over! You have won the game!!",
+							JOptionPane.INFORMATION_MESSAGE, winnerIcon);
+					JOptionPane.showMessageDialog(null, gameStatistics, "Game Stats",
+							JOptionPane.INFORMATION_MESSAGE, statsIcon);
+					sunkDes.setBackground(orange);
+					sunkSub.setBackground(orange);
+					sunkCru.setBackground(orange);
+					sunkBat.setBackground(orange);
+					sunkCar.setBackground(orange);
+				}
+				else if(game.AIhits == 17) {
+					JOptionPane.showMessageDialog(null, "", "Game Over! The enemy has won the game!!",
+							JOptionPane.INFORMATION_MESSAGE, loserIcon);
+					JOptionPane.showMessageDialog(null, gameStatistics, "Game Stats",
+							JOptionPane.INFORMATION_MESSAGE, statsIcon);
+					enemySunkDes.setBackground(orange);
+					enemySunkSub.setBackground(orange);
+					enemySunkCru.setBackground(orange);
+					enemySunkBat.setBackground(orange);
+					enemySunkCar.setBackground(orange);
+				}
+			
+			
+			
+				elapsedSeconds = elapsedTime / 1000;
+				secondsDisplay = elapsedSeconds % 60;
+				elapsedMinutes = elapsedSeconds / 60;
+				minutesDisplay = elapsedMinutes % 60;
+				if(minutesDisplay < 10)
+					timer.setText("Time: 0" + minutesDisplay + ":" + secondsDisplay + "." + elapsedTime % 1000);
 				else
-					System.out.println("major error 2");
-			}
-
-			else {
-				boolean canFire = false;
-				int r1 = -1;
-				int r2 = -1;
-				while(!canFire) {
-					r1 = rand.nextInt(8);
-					r2 = rand.nextInt(8);
-					if(game.checkFire(r1, r2))
-						canFire = true;
-				}
-				if(canFire) {
-					if(game.shotFired(r1, r2)) {
-						playerBoardButton[r1][r2].setBackground(hit);
-						enemyHits.setText("Enemy Hits: " + game.AIhits);
-					}
-					else {
-						playerBoardButton[r1][r2].setBackground(Color.WHITE);
-						enemyMisses.setText("Enemy Misses: " + game.AImisses);
-					}
-					enemyHitStreak.setText("Enemy Hit Streak: " + game.AIhitStreak);
-					enemyBestHitStreak.setText("Enemy Top Hit Streak: " + game.AIbestStreak);
-				}
-				else 
-					System.out.println("major error 3");
-
-			}
-			
-			float enemyAccuracy = ((float)game.AIhits/((float)game.AIhits+(float)game.AImisses))* 100;
-			System.out.println("acc " + accuracy);
-			enemyScore.setText("Enemy Accuracy: " + df.format(enemyAccuracy) + "%");
-
-			System.out.println("brutal hits " + game.brutalHits);
-			
-			turnNum.setText("Turn Number: " + (game.playerHits+game.playerMisses+1));
-
-			// helpful for debugging
-			game.displayPlayerShips();
-			game.displayAIShips();
-			game.displayPlayerGrid();
-			game.displayAIGrid();
-			
-			int sunkShip = 0;
-			for(int z = 0; z < game.allShipsStatus.length; z++) {
-				if(game.allShipsStatus[z] == -1) {
-					if(z <= 4) {
-						sunkShip = shipVal(z);
-						for(int row = 0; row < game.getRows(); row++) {
-							for(int col = 0; col < game.getCols(); col++) {
-								if(game.AIshipLocs[row][col] == sunkShip) {
-									enemyBoardButton[row][col].setBackground(sunk);
-									enemyBoardButton[row][col].setText(String.valueOf(game.AIshipLocs[row][col]));
-									if(sunkShip == 2)
-										sunkDes.setBackground(checkmark);
-									else if(sunkShip == 3)
-										sunkSub.setBackground(checkmark);
-									else if(sunkShip == 6)
-										sunkCru.setBackground(checkmark);
-									else if(sunkShip == 4)
-										sunkBat.setBackground(checkmark);
-									else if(sunkShip == 5)
-										sunkCar.setBackground(checkmark);
-								}
-							}
-						}
-					}
-					else if(z > 4) {
-						sunkShip = shipVal(z);
-						for(int row = 0; row < game.getRows(); row++) {
-							for(int col = 0; col < game.getCols(); col++) {
-								if(game.shipLocs[row][col] == sunkShip) {
-									playerBoardButton[row][col].setBackground(sunk);
-									if(sunkShip == 2)
-										enemySunkDes.setBackground(checkmark);
-									else if(sunkShip == 3)
-										enemySunkSub.setBackground(checkmark);
-									else if(sunkShip == 6)
-										enemySunkCru.setBackground(checkmark);
-									else if(sunkShip == 4)
-										enemySunkBat.setBackground(checkmark);
-									else if(sunkShip == 5)
-										enemySunkCar.setBackground(checkmark);
-								}
-							}
-						}
-					}
-					game.allShipsStatus[z] = -2;
-				}
-			}
-			
-			
-
-			// FIXME WOULD HAVE TO UPDATE LEADERBOARDS IN HERE
-			if(game.playerHits == 17) {
-				JOptionPane.showMessageDialog(null, "", "Game Over! You have won the game!!",
-						JOptionPane.INFORMATION_MESSAGE, winnerIcon);
-				JOptionPane.showMessageDialog(null, gameStatistics, "Game Stats",
-						JOptionPane.INFORMATION_MESSAGE, statsIcon);
-				sunkDes.setBackground(orange);
-				sunkSub.setBackground(orange);
-				sunkCru.setBackground(orange);
-				sunkBat.setBackground(orange);
-				sunkCar.setBackground(orange);
-			}
-			else if(game.AIhits == 17) {
-				JOptionPane.showMessageDialog(null, "", "Game Over! The enemy has won the game!!",
-						JOptionPane.INFORMATION_MESSAGE, loserIcon);
-				JOptionPane.showMessageDialog(null, gameStatistics, "Game Stats",
-						JOptionPane.INFORMATION_MESSAGE, statsIcon);
-				enemySunkDes.setBackground(orange);
-				enemySunkSub.setBackground(orange);
-				enemySunkCru.setBackground(orange);
-				enemySunkBat.setBackground(orange);
-				enemySunkCar.setBackground(orange);
-			}
-			
-			
-			
-			elapsedSeconds = elapsedTime / 1000;
-			secondsDisplay = elapsedSeconds % 60;
-			elapsedMinutes = elapsedSeconds / 60;
-			minutesDisplay = elapsedMinutes % 60;
-			if(minutesDisplay < 10)
-				timer.setText("Time: 0" + minutesDisplay + ":" + secondsDisplay + "." + elapsedTime % 1000);
-			else
-				timer.setText("Time: " + minutesDisplay + ":" + secondsDisplay + "." + elapsedTime % 1000);
+					timer.setText("Time: " + minutesDisplay + ":" + secondsDisplay + "." + elapsedTime % 1000);
 			
 			
 			}

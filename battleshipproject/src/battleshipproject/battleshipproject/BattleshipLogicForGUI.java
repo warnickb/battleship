@@ -735,8 +735,8 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 		// player will now place their ships
 		JOptionPane.showMessageDialog(null, "Time to place your ships!", "Game Setup", 
 				JOptionPane.INFORMATION_MESSAGE, shipsIcon);
-		//placePlayerShips();
-		presentationDemo();
+		placePlayerShips();
+		//presentationDemo();
 
 		// AI ships will now be placed at random
 		JOptionPane.showMessageDialog(null, "The AI's ships will now be placed at random...", "Game Setup",
