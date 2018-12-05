@@ -4,26 +4,29 @@ package battleshipproject;
  * Battleship Game Logic Interface
  * 
  * @author Justin Perticone
- * @version November 26, 2018
+ * @version December 4, 2018
  ********************************************************************************/
 
 public interface BattleshipInterface {
 
-	/**
+	/****************************************************************************
+	 * Determines if coordinates are valid to fire to
+	 * Only used by the AI
 	 *
-	 *
-	 */
+	 * @param row_pos - row value
+	 * @param col_pos - column value
+	 * @return true if location is valid, false otherwise
+	 ****************************************************************************/
 	public boolean checkFire(int row_pos, int col_pos);
 
 
 	/****************************************************************************
-	 * Determines if location of fire is valid
+	 * Determines if the shot fired is a hit or a miss
+	 * AI updates smartShots and shipsRemembered arrays within this method
 	 *
 	 * @param row_pos - row value
 	 * @param col_pos - column value
-	 * @return true when location is valid, otherwise false because
-	 * 	1) the location is out of bounds
-	 * 	2) the location has already received fire
+	 * @return true if the shot is a hit, false if it is a miss
 	 ****************************************************************************/
 	public boolean shotFired(int row_pos, int col_pos);
 	
@@ -57,30 +60,15 @@ public interface BattleshipInterface {
 
 
 	/****************************************************************************
-	 * Method executed once all ships have been sunk on one side
-	 * Asks user if they would like to play again - FIXME
-	 ****************************************************************************/
-	public void getWinner();
-
-
-	/****************************************************************************
 	 * Resets the game
 	 ****************************************************************************/
 	public void reset();
-
+	
 	
 	/****************************************************************************
-	 * Plays out an entire game of Battleship until there is a winner
+	 * Gives the player information regarding the selected difficulty
 	 ****************************************************************************/
-	public void playGame();
-
-	
-	/****************************************************************************
-	 * Used in the testing version only 
-	 * Simulates a game where only the AI can fire
-	 * Able to analyze the "thought process" of the AI
-	 ****************************************************************************/
-	public void AIonly();
+	public void difficultyInfo();
 
 
 	/****************************************************************************

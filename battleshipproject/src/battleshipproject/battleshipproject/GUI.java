@@ -70,7 +70,8 @@ public class GUI extends JFrame {
 		btnNewGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new gridGUI();
-				setVisible(false);
+				frame.dispose();
+				//setVisible(false);
 			}
 			});
 			

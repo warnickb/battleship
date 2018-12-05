@@ -1,12 +1,8 @@
 package battleshipproject;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -15,10 +11,6 @@ import java.text.DecimalFormat;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-//import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
 import javax.swing.*;
 import java.util.*;
 
@@ -47,7 +39,7 @@ public class gridGUI extends JFrame {
 	JButton bestHitStreak = new JButton("Top Hit Streak: 0");
 	JButton timer = new JButton("Time: 00:00.000");
 	JButton enemyHitStreak = new JButton("Enemy Hit Streak: 0");
-	JButton enemyBestHitStreak = new JButton("Enemy Top Hit Streak: 0");
+	JButton enemyBestHitStreak = new JButton("Top Hit Streak: 0");
 	
 	JButton playerSunk;
 	JButton sunkDes;
@@ -77,12 +69,14 @@ public class gridGUI extends JFrame {
 	JMenuBar menuBar;
 	JMenu file;
 	JMenu stats;
+	JMenu information;
 	JMenuItem saveItem;
 	JMenuItem loadItem;
 	JMenuItem newItem;
 	JMenuItem quitItem;
 	JMenuItem currStatsItem;
 	JMenuItem leaderboardsItem;
+	JMenuItem diffInfoItem;
 	
 	ImageIcon winnerIcon;
 	ImageIcon loserIcon;
@@ -94,6 +88,8 @@ public class gridGUI extends JFrame {
 	long secondsDisplay;
 	long elapsedMinutes;
 	long minutesDisplay;
+	
+	Font font;
 
 		
 	public gridGUI() {
@@ -118,7 +114,7 @@ public class gridGUI extends JFrame {
 	public void gridSetup() {
 		
 		//create GUI and set Layout
-		
+		font = new Font("Lucida Calligraphy", Font.PLAIN, 18);
 		frame = new JFrame();
 		pane = new JPanel();
 		myLayout = new GridLayout(19, 10);
@@ -140,10 +136,15 @@ public class gridGUI extends JFrame {
 		currStatsItem.addActionListener(myHandler);
 		// FIXME make leaderboards into a panel or something other than message dialog
 		leaderboardsItem = new JMenuItem("Leaderboards");
-		leaderboardsItem.addActionListener(myHandler);
+		//leaderboardsItem.addActionListener(myHandler);
 		stats.add(currStatsItem);
+		information = new JMenu("Information");
+		diffInfoItem = new JMenuItem("Difficulty Information");
+		diffInfoItem.addActionListener(myHandler);
+		information.add(diffInfoItem);
 		menuBar.add(file);
 		menuBar.add(stats);
+		menuBar.add(information);
 		frame.setJMenuBar(menuBar);
 		
 		playerSunk = new JButton("Player Checklist:");
@@ -158,6 +159,20 @@ public class gridGUI extends JFrame {
 		enemySunkCru = new JButton("Cruiser");
 		enemySunkBat = new JButton("Battleship");
 		enemySunkCar = new JButton("Carrier");
+		
+		playerSunk.setFont(font);
+		sunkDes.setFont(font);
+		sunkSub.setFont(font);
+		sunkCru.setFont(font);
+		sunkBat.setFont(font);
+		sunkCar.setFont(font);
+		enemySunk.setFont(font);
+		enemySunkDes.setFont(font);
+		enemySunkSub.setFont(font);
+		enemySunkCru.setFont(font);
+		enemySunkBat.setFont(font);
+		enemySunkCar.setFont(font);
+		
 		
 		playerSunk.setBackground(yellow);
 		enemySunk.setBackground(yellow);
@@ -203,7 +218,7 @@ public class gridGUI extends JFrame {
 		score.setText("Accuracy: ");
 	    turnNum.setText("Turn Number: 0");
 	    hits.setText("Hits: 0");
-	    enemyScore.setText("Enemy Accuracy: ");
+	    enemyScore.setText("Accuracy: ");
 	    enemyHits.setText("Enemy Hits: 0");
 	    enemyMisses.setText("Enemy Misses: 0");
 	    misses.setText("Misses: 0");
@@ -216,6 +231,9 @@ public class gridGUI extends JFrame {
 	    pane.add(sunkCar);
 	    pane.add(score);
 	    pane.add(bestHitStreak);
+	    
+	    score.setFont(font);
+	    bestHitStreak.setFont(font);
 		
 
 	    pane.add(hits);
@@ -226,6 +244,16 @@ public class gridGUI extends JFrame {
 	    pane.add(enemyHitStreak);
 	    pane.add(turnNum);
 	    pane.add(timer); 
+	    
+	    hits.setFont(font);
+	    misses.setFont(font);
+	    enemyHits.setFont(font);
+	    enemyMisses.setFont(font);
+	    hitStreak.setFont(font);
+	    enemyHitStreak.setFont(font);
+	    turnNum.setFont(font);
+	    timer.setFont(font);
+	    
 	   
 	    
 	    score.setEnabled(false);
@@ -244,6 +272,10 @@ public class gridGUI extends JFrame {
 	    pane.add(enemySunkCar);
 	    pane.add(enemyScore);
 	    pane.add(enemyBestHitStreak);
+	    
+	    enemyScore.setFont(font);
+	    enemyBestHitStreak
+	    .setFont(font);
 	    
 
 	    
@@ -267,6 +299,7 @@ public class gridGUI extends JFrame {
 	    	for(int col = 0; col < game.getCols(); col++) {
 	    		if(game.shipLocs[row][col] >= 2) {
 	    			playerBoardButton[row][col].setBackground(ship);
+	    			playerBoardButton[row][col].setFont(font);
 	    			playerBoardButton[row][col].setText(String.valueOf(game.shipLocs[row][col]));
 	    		}
 	    	}
@@ -285,7 +318,7 @@ public class gridGUI extends JFrame {
 	    //pack();
 	    //setVisible(true);
 	}
-
+	
 
 	private class MyButtonHandler implements ActionListener {
 
@@ -322,6 +355,9 @@ public class gridGUI extends JFrame {
 					new GUI();
 				}
 			}
+			else if(which == diffInfoItem) {
+				game.difficultyInfo();
+			}
 			// FIXME WILL NEW new GUI() in loadItem
 			else if(which == saveItem) {
 				
@@ -335,7 +371,7 @@ public class gridGUI extends JFrame {
 				for(int r = 0; r < game.getRows(); r++) {
 					for(int c = 0; c < game.getCols(); c++) {
 						if(enemyBoardButton[r][c] == which) {
-							if(game.checkFire(r, c)) {
+							//if(game.checkFire(r, c)) {
 								if(game.shotFired(r, c)) {
 									enemyBoardButton[r][c].setBackground(hit);
 									hits.setText("Hits: " + game.playerHits);
@@ -350,7 +386,7 @@ public class gridGUI extends JFrame {
 							} else {
 								System.out.println("already fired here");
 							}
-						}
+						//}
 					}
 				}
 
@@ -413,7 +449,7 @@ public class gridGUI extends JFrame {
 							enemyMisses.setText("Enemy Misses: " + game.AImisses);
 						}
 						enemyHitStreak.setText("Enemy Hit Streak: " + game.AIhitStreak);
-						enemyBestHitStreak.setText("Enemy Top Hit Streak: " + game.AIbestStreak);
+						enemyBestHitStreak.setText("Top Hit Streak: " + game.AIbestStreak);
 					}
 
 				}
@@ -448,7 +484,7 @@ public class gridGUI extends JFrame {
 							enemyMisses.setText("Enemy Misses: " + game.AImisses);
 						}
 						enemyHitStreak.setText("Enemy Hit Streak: " + game.AIhitStreak);
-						enemyBestHitStreak.setText("Enemy Top Hit Streak: " + game.AIbestStreak);
+						enemyBestHitStreak.setText("Top Hit Streak: " + game.AIbestStreak);
 					}
 					else 
 						System.out.println("major error");
@@ -487,7 +523,7 @@ public class gridGUI extends JFrame {
 							enemyMisses.setText("Enemy Misses: " + game.AImisses);
 						}
 						enemyHitStreak.setText("Enemy Hit Streak: " + game.AIhitStreak);
-						enemyBestHitStreak.setText("Enemy Top Hit Streak: " + game.AIbestStreak);
+						enemyBestHitStreak.setText("Top Hit Streak: " + game.AIbestStreak);
 					}
 					else
 						System.out.println("major error 2");
@@ -513,7 +549,7 @@ public class gridGUI extends JFrame {
 							enemyMisses.setText("Enemy Misses: " + game.AImisses);
 						}
 						enemyHitStreak.setText("Enemy Hit Streak: " + game.AIhitStreak);
-						enemyBestHitStreak.setText("Enemy Top Hit Streak: " + game.AIbestStreak);
+						enemyBestHitStreak.setText("Top Hit Streak: " + game.AIbestStreak);
 					}
 					else 
 						System.out.println("major error 3");
@@ -522,9 +558,7 @@ public class gridGUI extends JFrame {
 			
 				float enemyAccuracy = ((float)game.AIhits/((float)game.AIhits+(float)game.AImisses))* 100;
 				System.out.println("acc " + accuracy);
-				enemyScore.setText("Enemy Accuracy: " + df.format(enemyAccuracy) + "%");
-
-				System.out.println("brutal hits " + game.brutalHits);
+				enemyScore.setText("Accuracy: " + df.format(enemyAccuracy) + "%");
 			
 				turnNum.setText("Turn Number: " + (game.playerHits+game.playerMisses+1));
 
@@ -544,6 +578,7 @@ public class gridGUI extends JFrame {
 									if(game.AIshipLocs[row][col] == sunkShip) {
 										enemyBoardButton[row][col].setBackground(sunk);
 										enemyBoardButton[row][col].setText(String.valueOf(game.AIshipLocs[row][col]));
+										enemyBoardButton[row][col].setFont(font);
 										if(sunkShip == 2)
 											sunkDes.setBackground(checkmark);
 										else if(sunkShip == 3)
