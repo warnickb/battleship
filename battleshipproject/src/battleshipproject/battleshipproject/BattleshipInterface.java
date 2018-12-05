@@ -4,9 +4,8 @@ package battleshipproject;
  * Battleship Game Logic Interface
  * 
  * @author Justin Perticone
- * @version December 4, 2018
+ * @version December 5, 2018
  ********************************************************************************/
-
 public interface BattleshipInterface {
 
 	/****************************************************************************
@@ -78,7 +77,7 @@ public interface BattleshipInterface {
 
 
 	/****************************************************************************
-	 * Used specifically to demo the project in class
+	 * Used to auto place the player's ships 
 	 ****************************************************************************/
 	public void presentationDemo();
 

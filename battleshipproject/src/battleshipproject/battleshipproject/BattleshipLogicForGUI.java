@@ -3,6 +3,10 @@ package battleshipproject;
 import javax.swing.*;
 
 import java.awt.Font;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 /**************************************************************************************
@@ -64,7 +68,6 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 	/* determines AI level */
 	String difficulty;
 
-	//FIXME FIXME FIXME WILL NEED TO MOVE THESE TO WORK WITH RESET - or have a reset special arrays method
 	/* used to help AI sink a ship after it lands a hit */
 	String[] smartShots = {"XX", "XX", "XX", "XX"};
 
@@ -91,6 +94,11 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 	ImageIcon challengeIcon;
 	ImageIcon brutalIcon;
 	
+	float Laccuracy;
+	int Lstreak;
+	int Lturns;
+	String Ltime;
+	
 	
 
 	/***************************************************************************
@@ -115,7 +123,29 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 		invalidIcon = new ImageIcon(BattleshipLogicForGUI.class.getResource("invalid.png"));
 		normalIcon = new ImageIcon(BattleshipLogicForGUI.class.getResource("boat.jpg"));
 		challengeIcon = new ImageIcon(BattleshipLogicForGUI.class.getResource("challenge.jpg"));
-		brutalIcon = new ImageIcon(BattleshipLogicForGUI.class.getResource("brutal2.jpg"));
+		brutalIcon = new ImageIcon(BattleshipLogicForGUI.class.getResource("brutal.jpg"));
+		
+		// initializing instance variables
+		currentPlayer = 1;
+		playerHits = 0;
+		AIhits = 0;
+		playerMisses = 0;
+		AImisses = 0;
+		hitStreak = 0;
+		AIhitStreak = 0;
+		bestStreak = 0;
+		AIbestStreak = 0;
+		smartShooting = false;
+		shipHit = false;
+		smartHits = 0;
+		initialHitRow = -2;
+		initialHitCol = -2;
+		initialShipHit = -2;
+		brutalHits = 0;
+		placeCruiser = false;
+		rememberOtherHit = "";
+		rememberOtherHit2 = "";
+		rememberOtherHit3 = "";
 		
 		reset();		
 
@@ -593,29 +623,8 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 			JOptionPane.INFORMATION_MESSAGE, null, possibleDiffs, possibleDiffs[0]);	
 		difficulty = selectedDiff.toString();
 		
+		// display difficulty info
 		difficultyInfo();
-
-		// initialize instance variables - FIXME could move to constructor
-		currentPlayer = 1;
-		playerHits = 0;
-		AIhits = 0;
-		playerMisses = 0;
-		AImisses = 0;
-		hitStreak = 0;
-		AIhitStreak = 0;
-		bestStreak = 0;
-		AIbestStreak = 0;
-		smartShooting = false;
-		shipHit = false;
-		smartHits = 0;
-		initialHitRow = -2;
-		initialHitCol = -2;
-		initialShipHit = -2;
-		brutalHits = 0;
-		placeCruiser = false;
-		rememberOtherHit = "";
-		rememberOtherHit2 = "";
-		rememberOtherHit3 = "";
 
 		// setting up the firing grid and setting all coordinates to 0
 		grid = new int[totalRows][totalCols];
@@ -644,8 +653,8 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 		// player will now place their ships
 		JOptionPane.showMessageDialog(null, "Time to place your ships!", "Game Setup", 
 				JOptionPane.INFORMATION_MESSAGE, shipsIcon);
-		//placePlayerShips();
-		presentationDemo();
+		placePlayerShips();
+		//presentationDemo();
 
 		// AI ships will now be placed at random
 		JOptionPane.showMessageDialog(null, "The AI's ships will now be placed at random...", "Game Setup",
@@ -659,9 +668,10 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 	 ****************************************************************************/
 	public void difficultyInfo() {
 		if(difficulty.equals("Brutal")) {
-			String message = "It is not recommended that you place ships near each other.\n:\n" +
+			String message = "You have selected Brutal difficulty.\n:\n" +
+							"It is not recommended that you place ships near each other.\n:\n" +
 							"The enemy will land a shot on a random ship on their first turn.\n:\n" +
-							"It is also guaranteed they will land a shot on a random ship every 5 misses.\n:\n" +
+							"It is also guaranteed they will land a shot on a random ship after every 5 misses.\n:\n" +
 							// could end with something about davey jones
 							"The AI is smart.\n:\n" +
 							"Good luck. You will need it.";
@@ -669,16 +679,18 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 					JOptionPane.INFORMATION_MESSAGE, brutalIcon);
 		}
 		else if(difficulty.equals("Challenge")) {
-			String message = "Challenge difficulty is almost identical to classic Battleship.\n:\n" +
+			String message = "You have selected Challenge difficulty.\n:\n" +
+					"Challenge difficulty is almost identical to classic Battleship.\n:\n" +
 					"However, the enemy will land a shot on a random ship on their first turn.\n:\n" +
 					"This slight difference can have a great impact.\n:\n" +
-					"Don't forget the AI smart.\n:\n" +
+					"Don't forget the AI is smart.\n:\n" +
 					"Good luck.";
 			JOptionPane.showMessageDialog(null, message, "Challenge Difficulty", 
 					JOptionPane.INFORMATION_MESSAGE, challengeIcon);
 		}
 		else if(difficulty.equals("Normal")) {
-			String message = "Normal difficulty plays like classic Battleship.\n:\n" +
+			String message = "You have selected Normal difficulty.\n:\n" +
+					"Normal difficulty plays like classic Battleship.\n:\n" +
 					"The enemy will fire at random until it lands a hit.\n:\n" +
 					"After that they will fire at that ship until it is sunk.\n:\n" +
 					"The AI will also take note of any other ships hit during that time.\n:\n" +
@@ -736,16 +748,17 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 			// while loop used to check for valid input  
 			while(validInput == false) {
 				gridLoc = JOptionPane.showInputDialog(null, "Enter the coordinates for your ship: ");
-				if(gridLoc.length() == 2 && validLetter(gridLoc.substring(0, 1)) == true && validNumber(Integer.parseInt(gridLoc.substring(1, 2))))
+				if(gridLoc.length() == 2 && validLetter(gridLoc.substring(0, 1).toUpperCase()) == true && validNumber(Integer.parseInt(gridLoc.substring(1, 2))))
 					validInput = true;
 				else
 					JOptionPane.showMessageDialog(null, "Invalid input. Please try again.", "Game Setup",
 							JOptionPane.INFORMATION_MESSAGE, invalidIcon);
 			}
 
-			// FIXME toUpperCase() need to be implemented above
+			// changing lower case input to upper case
+			String gridRow = gridLoc.substring(0, 1);
 			String gridCol = gridLoc.substring(1, 2);
-			gridLoc = gridLoc.substring(0, 1).toUpperCase() + gridCol;
+			gridLoc = gridRow.toUpperCase() + gridCol;
 		
 			// converting char digits to ints
 			int y = convertLetterInput(gridLoc.substring(0, 1));
@@ -754,7 +767,6 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 			// ship not already placed at input coordinates
 			if(shipLocs[y][x] == 0) {
 
-				// FIXME I BELIEVE THIS COULD BE OPTIMIZED INTO TWO FOR LOOPS
 				// checking in the left direction (number)
 				for(int i = x; i >= 0; i--) {
 					// check boundary
@@ -877,6 +889,7 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 				if(found == 3)
 					three = "Downwards";
 
+				// possible options
 				Object[] possibleValues = {one, two, three};
 				Object selectedValue = JOptionPane.showInputDialog(null, "Choose Direction", "Place Ship",
 						JOptionPane.INFORMATION_MESSAGE, null, possibleValues, possibleValues[0]);
@@ -919,7 +932,7 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 						two = "Downwards";
 				}
 
-				
+				// possible options
 				Object[] possibleValues = {one, two};
 				Object selectedValue = JOptionPane.showInputDialog(null, "Choose Direction", "Place Ship",
 						JOptionPane.INFORMATION_MESSAGE, null, possibleValues, possibleValues[0]);
@@ -944,7 +957,7 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 				else if(placeDownwards[0] != -1)
 					one = "Downwards";
 
-
+				// possible options
 				Object[] possibleValues = {one};
 				Object selectedValue = JOptionPane.showInputDialog(null, "Choose Direction", "Place Ship",
 						JOptionPane.INFORMATION_MESSAGE, null, possibleValues, possibleValues[0]);
@@ -970,13 +983,11 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 
 		}
 
-		// displaying ship placement - FIXME
-		displayPlayerShips();
 	}
 
 	
 	/****************************************************************************
-	 * Used specifically to demo the project in class
+	 * Used to auto place the player's ships 
 	 ****************************************************************************/
 	public void presentationDemo() {
 
@@ -999,9 +1010,6 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 		// placing player Destroyer
 		for(int i = 2; i < 4; i++)
 			shipLocs[i][3] = 2;
-		
-		// displaying ship placement
-		displayPlayerShips();
 		
 	}
 
@@ -1380,6 +1388,7 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 	public int getCols() {
 		return totalCols;
 	}
-
+	
+	
 
 }
