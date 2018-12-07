@@ -62,16 +62,16 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 	String difficulty;
 
 	/** used to help AI sink a ship after it lands a hit */
-	String[] smartShots = {"XX", "XX", "XX", "XX"};
+	String[] smartShots;
 
 	/** keeps track of the life of each ship of both the player and AI */
-	int[] allShipsStatus = new int[]{2, 3, 3, 4, 5, 2, 3, 3, 4, 5};
+	int[] allShipsStatus;
 
 	/** array with all the names of the ships */ 
-	String[] allShipNames = new String[]{"Destroyer", "Submarine", "Cruiser", "Battleship", "Carrier"};
+	String[] allShipNames;
 
 	/** array of ships hit aside from the first ship while AI is trying to sink a ship */ 
-	int[] shipsRemembered = new int[]{0, 0, 0, 0};
+	int[] shipsRemembered;
 	
 	/** icons used for JOptionPane message dialogs */
 	ImageIcon shipsIcon;
@@ -98,7 +98,7 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 		totalCols = 8;
 		gridSize = 64;
 		
-		// initializing all icons
+		// instantiating all icons
 		shipsIcon = new ImageIcon(BattleshipLogicForGUI.class.getResource("linedships.jpg"));
 		shipsPlacedIcon = new ImageIcon(BattleshipLogicForGUI.class.getResource("ships.jpg"));
 		desIcon = new ImageIcon(BattleshipLogicForGUI.class.getResource("destroyer.jpg"));
@@ -111,6 +111,11 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 		normalIcon = new ImageIcon(BattleshipLogicForGUI.class.getResource("boat.jpg"));
 		challengeIcon = new ImageIcon(BattleshipLogicForGUI.class.getResource("challenge.jpg"));
 		brutalIcon = new ImageIcon(BattleshipLogicForGUI.class.getResource("brutal.jpg"));
+		
+		smartShots = new String[]{"XX", "XX", "XX", "XX"};
+		allShipsStatus = new int[]{2, 3, 3, 4, 5, 2, 3, 3, 4, 5};
+		allShipNames = new String[]{"Destroyer", "Submarine", "Cruiser", "Battleship", "Carrier"};
+		shipsRemembered = new int[]{0, 0, 0, 0};
 		
 		// initializing instance variables
 		currentPlayer = 1;
