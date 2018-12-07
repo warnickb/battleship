@@ -1,6 +1,6 @@
 package battleshipproject;
 
-import java.awt.Color;
+import java.awt.Color; 
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -23,15 +23,15 @@ import java.util.*;
  **********************************************************************/
 public class gridGUI extends JFrame {
 	
-	/* Battleship Game object */
+	/** Battleship Game object */
 	BattleshipLogicForGUI game;
 	
-	/* buttons for the game grids */
+	/** buttons for the game grids */
 	JButton[][] enemyBoardButton;
 	JButton[][] playerBoardButton;
 	
-	/* JButtons used by GUI */
-	/* scores display firing accuracy */
+	/*** JButtons used by GUI ***/
+	/** scores display firing accuracy */
 	JButton score;
 	JButton turnNum;
 	JButton hits;
@@ -39,14 +39,14 @@ public class gridGUI extends JFrame {
 	JButton enemyScore;
 	JButton enemyHits;
 	JButton enemyMisses;
-	/* hit streak is the number of consecutive shots hit */
+	/** hit streak is the number of consecutive shots hit */
 	JButton hitStreak;
 	JButton bestHitStreak;
-	/* timer times how long the game is */
+	/** timer times how long the game is */
 	JButton timer;
 	JButton enemyHitStreak;
 	JButton enemyBestHitStreak;
-	/* sunk buttons change color to indicate ship is sunk */
+	/** sunk buttons change color to indicate ship is sunk */
 	JButton playerSunk;
 	JButton sunkDes;
 	JButton sunkSub;
@@ -60,62 +60,64 @@ public class gridGUI extends JFrame {
 	JButton enemySunkBat;
 	JButton enemySunkCar;
 	
-	/* water = default color of grid buttons */
+	/** water = default color of grid buttons */
 	Color water;
-	/* hit = color of a hit ship */
+	/** hit = color of a hit ship */
 	Color hit;
-	/* sunk = color of a sunk ship */
+	/** sunk = color of a sunk ship */
 	Color sunk;
-	/* ship = color of player ships on bottom grid */ 
+	/** ship = color of player ships on bottom grid */ 
 	Color ship;
-	/* checkmark = color of sunk ship on checklist */
+	/** checkmark = color of sunk ship on checklist */
 	Color checkmark;
-	/* yellow = color of some informational buttons */
+	/** yellow = color of some informational buttons */
 	Color yellow;
-	/* orange = color of winner's ships on checklist post game */
+	/** orange = color of winner's ships on checklist post game */
 	Color orange;
 	
-	/* using grid layout */
+	/** using grid layout */
 	GridLayout myLayout;
-	/* action listener for GUI */
+	
+	/** action listener for GUI */
 	MyButtonHandler myHandler;
-	/* GUI container */
+	
+	/** GUI container */
 	JPanel pane;
 	JFrame frame;
 	
-	/* MenuBar of GUI */
+	/** MenuBar of GUI */
 	JMenuBar menuBar;
 	
-	/* JMenus of GUI */
+	/** JMenus of GUI */
 	JMenu file;
 	JMenu stats;
 	JMenu information;
 
-	/* JMenuItems of GUI */
-	/* saves current game - not functional */
+	/*** JMenuItems of GUI ***/
+	/** saves current game - not functional */
 	JMenuItem saveItem;
-	/* loads a saved game - not functional */
+	/** loads a saved game - not functional */
 	JMenuItem loadItem;
-	/* takes user to main menu */
+	/** takes user to main menu */
 	JMenuItem newItem;
-	/* exits game */
+	/** exits game */
 	JMenuItem quitItem;
-	/* displays current game statistics */
+	/** displays current game statistics */
 	JMenuItem currStatsItem;
-	/* displays the leaderboards menu - not functional */
+	/** displays the leaderboards menu - not functional */
 	JMenuItem leaderboardsItem;
-	/* displays the difficulty information */
+	/** displays the difficulty information */
 	JMenuItem diffInfoItem;
 	
-	/* ImageIcons of GUI */
-	/* image displayed when the player wins */
+	/*** ImageIcons of GUI ***/
+	/** image displayed when the player wins */
 	ImageIcon winnerIcon;
-	/* image displayed when the player loses */
+	/** image displayed when the player loses */
 	ImageIcon loserIcon;
-	/* image that displays with statistics */
+	/** image that displays with statistics */
 	ImageIcon statsIcon;
 	
-	/* variables to calculate and display time */
+	/** variables to calculate and display time */
 	long startTime;
 	long elapsedTime;
 	long elapsedSeconds;
@@ -123,14 +125,14 @@ public class gridGUI extends JFrame {
 	long elapsedMinutes;
 	long minutesDisplay;
 	
-	/* variables to calculate firing accuracies */
+	/** variables to calculate firing accuracies */
 	float accuracy;
 	float enemyAccuracy;
 	
-	/* font used on GUI buttons */
+	/** font used on GUI buttons */
 	Font font;
 
-	/* boolean used to remember a brutal hit is owed */
+	/** boolean used to remember a brutal hit is owed */
 	boolean rememberBrutal;
 		
 	

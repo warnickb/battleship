@@ -1,46 +1,39 @@
 package battleshipproject;
 
 import javax.swing.*;
-
-import java.awt.Font;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.*;
 
 /**************************************************************************************
  * BattleshipGame Logic Class For Use With GUI
  *
  * @author Justin Perticone
- * @version November 29, 2018
+ * @version December 5, 2018
  **************************************************************************************/
-
 public class BattleshipLogicForGUI implements BattleshipInterface {
 
-	/* instance variables */
+	/***** instance variables *****/
 
-	/* 1 = player, 2 = AI */
+	/** 1 = player, 2 = AI */
 	int currentPlayer;
 
-	/* keeps track of player's shots */
+	/** keeps track of player's shots */
 	int[][] grid;
 
-	/* keeps track of AI's shots */
+	/** keeps track of AI's shots */
 	int[][] AIgrid;
 
-	/* keeps track of player's ships */
+	/** keeps track of player's ships */
 	int[][] shipLocs;
 
-	/* keeps track of AI's ships */
+	/** keeps track of AI's ships */
 	int[][] AIshipLocs;
 
-	/* grid is 8 x 8 */
+	/** grid is 8 x 8 */
 	int totalRows;
 	int totalCols;
 	int gridSize;
 
-	/* count hits, misses, and hit streaks*/
+	/** count hits, misses, and hit streaks */
 	int playerHits;
 	int AIhits;
 	int playerMisses;
@@ -50,10 +43,10 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 	int bestStreak;
 	int AIbestStreak;
 
-	/* used to differentiate the two 3 long ships */
+	/** used to differentiate the two 3 long ships */
 	boolean placeCruiser;
 
-	/* variables used for AI "smartshooting" */
+	/** variables used for AI "smartshooting" */
 	boolean smartShooting;
 	boolean shipHit;
 	int smartHits;
@@ -65,22 +58,22 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 	String rememberOtherHit2;
 	String rememberOtherHit3;
 
-	/* determines AI level */
+	/** determines AI level */
 	String difficulty;
 
-	/* used to help AI sink a ship after it lands a hit */
+	/** used to help AI sink a ship after it lands a hit */
 	String[] smartShots = {"XX", "XX", "XX", "XX"};
 
-	/* keeps track of the life of each ship of both the player and AI */
+	/** keeps track of the life of each ship of both the player and AI */
 	int[] allShipsStatus = new int[]{2, 3, 3, 4, 5, 2, 3, 3, 4, 5};
 
-	/* array with all the names of the ships */ 
+	/** array with all the names of the ships */ 
 	String[] allShipNames = new String[]{"Destroyer", "Submarine", "Cruiser", "Battleship", "Carrier"};
 
-	/* array of ships hit aside from the first ship while AI is trying to sink a ship */ 
+	/** array of ships hit aside from the first ship while AI is trying to sink a ship */ 
 	int[] shipsRemembered = new int[]{0, 0, 0, 0};
 	
-	/* icons used for JOptionPane message dialogs */
+	/** icons used for JOptionPane message dialogs */
 	ImageIcon shipsIcon;
 	ImageIcon shipsPlacedIcon;
 	ImageIcon desIcon;
@@ -93,12 +86,6 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 	ImageIcon normalIcon;
 	ImageIcon challengeIcon;
 	ImageIcon brutalIcon;
-	
-	float Laccuracy;
-	int Lstreak;
-	int Lturns;
-	String Ltime;
-	
 	
 
 	/***************************************************************************
@@ -653,8 +640,8 @@ public class BattleshipLogicForGUI implements BattleshipInterface {
 		// player will now place their ships
 		JOptionPane.showMessageDialog(null, "Time to place your ships!", "Game Setup", 
 				JOptionPane.INFORMATION_MESSAGE, shipsIcon);
-		placePlayerShips();
-		//presentationDemo();
+		//placePlayerShips();
+		presentationDemo();
 
 		// AI ships will now be placed at random
 		JOptionPane.showMessageDialog(null, "The AI's ships will now be placed at random...", "Game Setup",

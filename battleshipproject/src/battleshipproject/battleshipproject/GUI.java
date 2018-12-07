@@ -19,11 +19,11 @@ import java.awt.event.ActionListener;
  ********************************************************************************/
 public class GUI extends JFrame {
 	
-	/* container for main menu */
+	/** container for main menu */
 	private JPanel contentPane;
 	private JFrame frame;
 	
-	/* main menu buttons */
+	/** main menu buttons */
 	JButton btnNewGame;
 	JButton btnLeaderboards;
 	JButton btnExit;
